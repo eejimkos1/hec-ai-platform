@@ -1,0 +1,26 @@
+vessel_id,vessel_name,vessel_class,dwt,tank_capacity_m3,home_port,fuel_consumption_mt_day_laden,fuel_consumption_mt_day_ballast,max_speed_knots,ice_class,year_built
+HEC-CS-001,HEC Nereid,Coastal Small,620,527,PIR,3.2,2.4,10.5,None,2015
+HEC-CS-002,HEC Iris,Coastal Small,880,748,PIR,3.8,2.8,10.5,None,2017
+HEC-CS-003,HEC Lethe,Coastal Small,1350,1148,PIR,4.6,3.4,11.0,None,2019
+HEC-CS-004,HEC Charon,Coastal Small,750,638,HAM,3.5,2.6,10.5,None,2016
+HEC-CS-005,HEC Boreas,Coastal Small,1100,935,HAM,4.2,3.1,11.0,1C,2020
+HEC-CS-006,HEC Calypso,Coastal Small,680,578,GIB,3.3,2.5,10.5,None,2014
+HEC-CS-007,HEC Delphi,Coastal Small,1200,1020,GIB,4.4,3.3,11.0,None,2018
+HEC-CS-008,HEC Hydra,Coastal Small,950,808,MLT,4.0,3.0,10.5,None,2016
+HEC-CM-001,HEC Apollo,Coastal Medium,2100,1785,PIR,8.2,6.2,12.0,None,2016
+HEC-CM-002,HEC Artemis,Coastal Medium,2800,2380,PIR,9.5,7.1,12.0,None,2018
+HEC-CM-003,HEC Athena,Coastal Medium,3400,2890,PIR,11.2,8.4,12.5,None,2021
+HEC-CM-004,HEC Europa,Coastal Medium,2200,1870,HAM,8.6,6.5,12.0,1C,2017
+HEC-CM-005,HEC Helios,Coastal Medium,3100,2635,HAM,10.8,8.1,12.5,1C,2022
+HEC-CM-006,HEC Selene,Coastal Medium,2500,2125,GIB,9.2,6.9,12.0,None,2015
+HEC-CM-007,HEC Tethys,Coastal Medium,3200,2720,GIB,10.5,7.9,12.5,None,2020
+HEC-CM-008,HEC Nereus,Coastal Medium,2400,2040,MLT,9.0,6.8,12.0,None,2019
+HEC-RG-001,HEC Atlas,Regional,5200,4420,PIR,15.8,11.9,13.5,None,2017
+HEC-RG-002,HEC Oceanus,Regional,6500,5525,PIR,18.2,13.7,13.5,None,2019
+HEC-RG-003,HEC Kronos,Regional,5800,4930,HAM,16.5,12.4,13.5,1B,2018
+HEC-RG-004,HEC Medusa,Regional,6800,5780,HAM,19.0,14.3,14.0,1B,2022
+HEC-RG-005,HEC Iolcos,Regional,5500,4675,GIB,16.0,12.0,13.5,None,2016
+HEC-RG-006,HEC Triton,Regional,6200,5270,MLT,17.5,13.2,13.5,None,2020
+HEC-OL-001,HEC Aegean Star,Offshore Large,32000,27200,PIR,28.5,21.4,14.5,None,2018
+HEC-OL-002,HEC Poseidon,Offshore Large,34500,29325,HAM,31.0,23.3,14.5,1C,2020
+HEC-OL-003,HEC Hermes,Offshore Large,30500,25925,GIB,27.2,20.4,14.0,None,2016

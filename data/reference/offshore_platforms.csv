@@ -1,0 +1,9 @@
+platform_id,platform_name,region,latitude,longitude,operator,production_bpd,water_cut_pct,waste_generation_m3_day,storage_capacity_m3,collection_frequency_days,access_restrictions,minimum_tanker_size_dwt,contract_type,distance_from_nearest_port_nm
+PLT-EM-001,Prinos,Eastern Mediterranean,40.7600,24.5600,Energean,5000,75,48.0,1200,25,Weather window >Sea State 4,2000,Annual,38
+PLT-EM-002,Epsilon,Eastern Mediterranean,40.7200,24.6000,Energean,3000,62,32.0,800,21,Weather window >Sea State 4,2000,Annual,42
+PLT-EM-003,Karish,Eastern Mediterranean,32.8500,33.9000,Energean,50000,15,85.0,2500,14,Israeli EEZ coordination required,5000,Framework,95
+PLT-EM-004,Tanin,Eastern Mediterranean,32.9000,33.8500,Energean,20000,28,52.0,1500,21,Israeli EEZ coordination required,3000,Framework,90
+PLT-NS-001,Brent Charlie,North Sea,61.0500,1.7200,Shell,30000,85,185.0,4000,10,Helicopter transfer only in winter,5000,Annual,145
+PLT-NS-002,Forties Alpha,North Sea,57.7200,-0.9500,BP,25000,55,120.0,3000,14,Weather window >Sea State 5,3000,Annual,118
+PLT-NS-003,Ekofisk,North Sea,56.5500,3.2100,ConocoPhillips,40000,45,160.0,3500,12,Norwegian sector permit required,5000,Framework,188
+PLT-AD-001,Aquila,Adriatic,42.8000,14.1000,ENI,15000,38,62.0,1800,18,Italian territorial waters permit,2000,Annual,55

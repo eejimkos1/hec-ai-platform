@@ -1,0 +1,15 @@
+port_code,port_name,country,latitude,longitude,avg_daily_vessel_calls,hec_market_share_pct,storage_capacity_m3,competitor_count
+PIR,Piraeus,GR,37.9475,23.6370,85,75,25000,1
+HAM,Hamburg,DE,53.5461,9.9660,120,40,45000,3
+GIB,Gibraltar,GI,36.1408,-5.3536,70,65,15000,2
+MLT,Malta,MT,35.8989,14.5146,45,80,10000,1
+GEN,Genoa,IT,44.4056,8.9463,55,25,12000,3
+MRS,Marseille,FR,43.3462,5.3200,48,30,11000,2
+BCN,Barcelona,ES,41.3590,2.1685,62,22,14000,3
+RTM,Rotterdam,NL,51.9054,4.4661,140,8,50000,5
+ALG,Algeciras,ES,36.1272,-5.4427,75,18,8000,4
+LIM,Limassol,CY,34.6741,33.0379,32,55,7000,1
+ALE,Alexandria,EG,31.1842,29.8763,65,20,9000,3
+IST,Istanbul,TR,41.0053,28.9770,90,15,30000,4
+PSD,Port Said,EG,31.2565,32.2841,80,12,6000,3
+TAN,Tangier,MA,35.7850,-5.8029,40,35,5000,2
