@@ -3,255 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEC AI Platform — Operations Intelligence</title>
+    <title>HEC AI Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YcnS/NvGkpGBMiKiaNkO2d0E0j3njFLBh56" crossorigin="anonymous">
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- Header -->
-<div class="header-banner">
-    <div style="font-size:2rem; margin-bottom:4px;">⚓</div>
-    <h1>HEC AI Platform — Operations Intelligence</h1>
-    <p>Machine learning for petroleum waste separation process control and fleet collection logistics | Hellenic Environmental Center</p>
-</div>
-
-<!-- Loading -->
-<div id="loading" class="loading" style="display:none;">Loading dashboard data...</div>
-
-<!-- Main Content -->
-<div id="main-content" style="display:none;">
-
-<!-- 3 MAIN TABS -->
-<ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-separation" role="tab">🛢️ UC1: Separation Process Control</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-fleet" role="tab">🚢 UC2: Fleet Routing & Demand</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-roadmap" role="tab">🚀 Future AI Topics</a></li>
-</ul>
-
-<div class="tab-content">
-
-<!-- ===================================================================== -->
-<!-- TAB 1: USE CASE 1 — SEPARATION PROCESS CONTROL                        -->
-<!-- ===================================================================== -->
-<div class="tab-pane fade show active" id="tab-separation" role="tabpanel">
-    <div class="section-header">
-        <h3>🛢️ AI-Optimized Separation Process Control</h3>
-        <p>XGBoost yield predictor and Random Forest quality classifier for 3-phase petroleum waste separation (oil/water/solids)</p>
+<!-- SIDEBAR NAVIGATION -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-logo">HEC</div>
+        <div class="sidebar-company">Hellenic Environmental Center</div>
+        <div class="sidebar-tagline">AI Operations Platform</div>
     </div>
-
-    <!-- Financial KPIs -->
-    <div id="sep-kpis" class="kpi-row"></div>
-
-    <!-- AI Opportunity callout -->
-    <div id="sep-opportunity"></div>
-
-    <!-- Charts row 1 -->
-    <div class="section-header"><h3>📊 Model Performance</h3><p>Yield prediction accuracy and feature importance analysis</p></div>
-    <div class="chart-grid">
-        <div class="chart-container"><div id="chart-feat-imp"></div></div>
-        <div class="chart-container"><div id="chart-pred-scatter"></div></div>
+    <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link active" data-page="separation">
+            <span class="sidebar-link-icon">01</span>
+            <span class="sidebar-link-text">Separation Control</span>
+            <span class="sidebar-link-badge">UC1</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="fleet">
+            <span class="sidebar-link-icon">02</span>
+            <span class="sidebar-link-text">Fleet & Demand</span>
+            <span class="sidebar-link-badge">UC2</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="roadmap">
+            <span class="sidebar-link-icon">03</span>
+            <span class="sidebar-link-text">Future AI Topics</span>
+            <span class="sidebar-link-badge">3-7</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-footer-text">Built with ML/AI</div>
+        <div class="sidebar-footer-text">Plotly.js &bull; XGBoost</div>
     </div>
+</aside>
 
-    <!-- Charts row 2 -->
-    <div class="section-header"><h3>📈 Operational Analytics</h3><p>Facility-level performance and quality breakdown</p></div>
-    <div class="chart-grid">
-        <div class="chart-container"><div id="chart-yield-fac"></div></div>
-        <div class="chart-container"><div id="chart-quality"></div></div>
-    </div>
+<!-- MAIN CONTENT AREA -->
+<main class="main-area">
 
-    <!-- Monthly trend -->
-    <div class="section-header"><h3>📅 Monthly Trends</h3><p>Yield and margin evolution over time</p></div>
-    <div class="chart-grid">
-        <div class="chart-container"><div id="chart-sep-yield-monthly"></div></div>
-        <div class="chart-container"><div id="chart-sep-margin-monthly"></div></div>
-    </div>
+    <!-- Top bar -->
+    <header class="topbar">
+        <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-title" id="topbar-title">AI-Optimized Separation Process Control</div>
+        <div class="topbar-meta">HEC AI Platform v1.0</div>
+    </header>
 
-    <!-- Model summary -->
-    <div class="section-header"><h3>🤖 Model Summary</h3></div>
-    <div id="sep-model-summary" class="chart-container"></div>
-</div>
+    <!-- Loading -->
+    <div id="loading" class="loading">Loading dashboard data...</div>
 
-<!-- ===================================================================== -->
-<!-- TAB 2: USE CASE 2 — FLEET ROUTING & DEMAND FORECASTING                -->
-<!-- ===================================================================== -->
-<div class="tab-pane fade" id="tab-fleet" role="tabpanel">
-    <div class="section-header">
-        <h3>🚢 Predictive Fleet Routing & Demand Forecasting</h3>
-        <p>XGBoost demand forecaster for 14 ports + route optimization for 25-vessel collection fleet across Mediterranean & Northern Europe</p>
-    </div>
+    <!-- Pages (only one visible at a time) -->
+    <div id="pages-container" style="display:none;">
 
-    <!-- Financial KPIs -->
-    <div id="fleet-kpis" class="kpi-row"></div>
-
-    <!-- AI Opportunity callout -->
-    <div id="fleet-opportunity"></div>
-
-    <!-- Charts row 1 -->
-    <div class="section-header"><h3>📊 Demand Forecast Performance</h3><p>XGBoost model accuracy — overall and per-port</p></div>
-    <div class="chart-grid">
-        <div class="chart-container"><div id="chart-demand-scatter"></div></div>
-        <div class="chart-container"><div id="chart-voyage-class"></div></div>
-    </div>
-
-    <!-- Monthly demand -->
-    <div class="section-header"><h3>📈 Port Demand Trends</h3><p>Monthly waste volume by top ports with interactive range slider</p></div>
-    <div class="chart-container"><div id="chart-demand-monthly"></div></div>
-
-    <!-- Per-port table -->
-    <div class="section-header"><h3>📋 Per-Port Forecast Accuracy</h3><p>Individual port model metrics (MAPE, RMSE, R²)</p></div>
-    <div class="chart-container" id="fleet-port-table"></div>
-
-    <!-- Fleet economics -->
-    <div class="section-header"><h3>💰 Fleet Economics</h3><p>Revenue, fuel costs, and voyage profitability</p></div>
-    <div class="chart-grid">
-        <div class="chart-container"><div id="chart-fleet-economics"></div></div>
-        <div class="chart-container"><div id="chart-fleet-fuel"></div></div>
-    </div>
-</div>
-
-<!-- ===================================================================== -->
-<!-- TAB 3: FUTURE AI TOPICS (USE CASES 3-7)                               -->
-<!-- ===================================================================== -->
-<div class="tab-pane fade" id="tab-roadmap" role="tabpanel">
-    <div class="section-header">
-        <h3>🚀 Future AI Topics — Next Phase of HEC's Transformation</h3>
-        <p>5 additional ML/GenAI use cases identified for Hellenic Environmental Center. Each includes what it does, what's needed, how to build it, and expected business impact.</p>
-    </div>
-
-    <div class="roadmap-grid">
-
-        <!-- UC3: Feedstock Quality -->
-        <div class="roadmap-card">
-            <div class="rc-icon">🧪</div>
-            <h4>3. Feedstock Quality Prediction & Dynamic Pricing</h4>
-            <div class="rc-desc">ML classification of incoming petroleum waste upon arrival, predicting recovery value and setting dynamic acceptance pricing based on predicted oil yield, contaminant levels, and processing difficulty.</div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Need</div>
-                <div class="rc-section-body">Historical lab analysis data (viscosity, density, water/solids content), reception logs with pricing, processing outcomes per batch. Near-infrared (NIR) or inline sensors for real-time intake characterization.</div>
+        <!-- PAGE 1: SEPARATION -->
+        <section class="page" id="page-separation">
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1>AI-Optimized Separation Process Control</h1>
+                    <p>XGBoost yield predictor &amp; Random Forest quality classifier for 3-phase petroleum waste separation</p>
+                </div>
+                <div class="page-header-stat">
+                    <div class="page-header-stat-value" id="sep-header-r2">—</div>
+                    <div class="page-header-stat-label">Model R&sup2;</div>
+                </div>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">How to Implement</div>
-                <div class="rc-section-body">Train gradient-boosted classifiers on lab data to predict waste category and expected yield within 15 minutes of intake sampling. Build a pricing engine that adjusts acceptance fees based on predicted processing cost and recovery value. Deploy as tablet app at reception docks.</div>
-            </div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Eliminate unprofitable waste batches (currently ~8% of intake), reduce lab turnaround from 4 hours to 15 minutes, increase average margin per batch by 12-18% through dynamic pricing aligned to actual recovery economics.</div>
-            </div>
-            <div class="rc-impact">
-                <div class="rc-impact-label">Estimated Annual Impact</div>
-                <div class="rc-impact-value">€2.5M — €4.0M</div>
-            </div>
-        </div>
 
-        <!-- UC4: Regulatory Compliance -->
-        <div class="roadmap-card">
-            <div class="rc-icon">📋</div>
-            <h4>4. Multi-Jurisdictional Regulatory Compliance</h4>
-            <div class="rc-desc">GenAI-powered RAG (Retrieval-Augmented Generation) system for automated MARPOL compliance reporting across Greece, Germany, Gibraltar, and Malta — each with different waste declaration requirements.</div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Need</div>
-                <div class="rc-section-body">MARPOL Annex I/II/VI regulations, EU Ship Recycling Directive, national port state control requirements (4+ jurisdictions), historical compliance filings, waste delivery receipts (BDN documents), crew reporting templates.</div>
-            </div>
-            <div class="rc-section">
-                <div class="rc-section-title">How to Implement</div>
-                <div class="rc-section-body">Build a RAG system indexing all regulatory documents (MARPOL, EU directives, national rules). Auto-generate port-specific waste delivery reports. LLM-assisted anomaly detection on declarations vs actual quantities. Automated translation for multi-language filings.</div>
-            </div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Reduce compliance team workload by 60%, eliminate filing errors (currently 3-5 per month leading to delays/fines), ensure 100% regulatory coverage across all operating jurisdictions, cut average filing time from 4 hours to 30 minutes.</div>
-            </div>
-            <div class="rc-impact">
-                <div class="rc-impact-label">Estimated Annual Impact</div>
-                <div class="rc-impact-value">€800K — €1.5M (+ risk avoidance)</div>
-            </div>
-        </div>
+            <div id="sep-kpis" class="kpi-row"></div>
+            <div id="sep-opportunity"></div>
 
-        <!-- UC5: Predictive Maintenance -->
-        <div class="roadmap-card">
-            <div class="rc-icon">🔧</div>
-            <h4>5. Predictive Maintenance for Plants & Fleet</h4>
-            <div class="rc-desc">Sensor-based ML for predictive maintenance of centrifugal separators, pumps, heat exchangers at processing plants, and main engines/auxiliaries on the 25-vessel collection fleet — all handling corrosive petroleum waste cargo.</div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Need</div>
-                <div class="rc-section-body">Vibration sensors on centrifuges and rotating equipment, temperature/pressure logs from PLCs, engine room monitoring data (cylinder pressures, lube oil analysis), maintenance work order history (CMMS), spare parts inventory and lead times.</div>
+            <div class="section-divider">
+                <h2>Model Performance</h2>
+                <p>Yield prediction accuracy and feature importance analysis</p>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">How to Implement</div>
-                <div class="rc-section-body">Deploy IoT vibration/temperature sensors on critical equipment. Train anomaly detection models (Isolation Forest, LSTM autoencoders) on normal operating patterns. Build remaining-useful-life (RUL) estimators for centrifuge bearings and vessel engines. Integrate with maintenance scheduling for condition-based rather than time-based PM.</div>
+            <div class="chart-grid">
+                <div class="chart-card"><div id="chart-feat-imp"></div></div>
+                <div class="chart-card"><div id="chart-pred-scatter"></div></div>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Reduce unplanned downtime by 40-60% (centrifuge failures currently cost €50K+ per incident in lost production), extend equipment life by 15-25%, optimize spare parts inventory (reduce carrying cost by 20%), prevent catastrophic failures in corrosive environments.</div>
-            </div>
-            <div class="rc-impact">
-                <div class="rc-impact-label">Estimated Annual Impact</div>
-                <div class="rc-impact-value">€3.0M — €5.0M</div>
-            </div>
-        </div>
 
-        <!-- UC6: Market Intelligence -->
-        <div class="roadmap-card">
-            <div class="rc-icon">🤖</div>
-            <h4>6. GenAI Customer & Market Intelligence</h4>
-            <div class="rc-desc">AI-powered market scanner for port/rig expansion opportunities, automated RFP response generation, customer churn prediction, and competitive intelligence across the Mediterranean waste management market.</div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Need</div>
-                <div class="rc-section-body">CRM data (customer contracts, volumes, pricing history), port authority tender notices, AIS vessel tracking data for competitor fleet analysis, shipping market reports, historical RFP submissions and win/loss records.</div>
+            <div class="section-divider">
+                <h2>Operational Analytics</h2>
+                <p>Facility-level performance and quality breakdown</p>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">How to Implement</div>
-                <div class="rc-section-body">Build web scrapers for port authority tenders and shipping news. Train churn prediction model on customer behavior patterns. Deploy GenAI for automated RFP drafting (using RAG over past winning proposals). Create market intelligence dashboard showing competitor movements and expansion opportunities.</div>
+            <div class="chart-grid">
+                <div class="chart-card"><div id="chart-yield-fac"></div></div>
+                <div class="chart-card"><div id="chart-quality"></div></div>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Identify 3-5 new port expansion opportunities per year, increase RFP win rate from ~25% to ~40%, reduce customer churn by 15-20% through early intervention, cut RFP response time from 2 weeks to 3 days.</div>
-            </div>
-            <div class="rc-impact">
-                <div class="rc-impact-label">Estimated Annual Impact</div>
-                <div class="rc-impact-value">€1.5M — €3.0M (revenue growth)</div>
-            </div>
-        </div>
 
-        <!-- UC7: Carbon & ESG -->
-        <div class="roadmap-card">
-            <div class="rc-icon">🌍</div>
-            <h4>7. Carbon Footprint & ESG Analytics</h4>
-            <div class="rc-desc">AI-powered Life Cycle Assessment (LCA), automated ESG reporting under EU CSRD, and carbon credit modeling for waste-to-fuel operations under the EU Emissions Trading System (EU ETS) extending to maritime in 2024+.</div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Need</div>
-                <div class="rc-section-body">Energy consumption data per process stage, fuel consumption records (fleet + plant), waste input/output mass balances, emission factors database, EU ETS verification methodology, GHG Protocol Scope 1/2/3 boundaries, CSRD reporting templates.</div>
+            <div class="section-divider">
+                <h2>Monthly Trends</h2>
+                <p>Yield and margin evolution over time</p>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">How to Implement</div>
-                <div class="rc-section-body">Build automated LCA pipeline calculating CO2-equivalent per tonne of waste processed vs alternative disposal methods. Deploy GenAI for CSRD-compliant narrative generation. Model carbon credit eligibility for recovered fuel displacing virgin fossil fuels. Create real-time ESG dashboard for investor/regulatory reporting.</div>
+            <div class="chart-grid">
+                <div class="chart-card"><div id="chart-sep-yield-monthly"></div></div>
+                <div class="chart-card"><div id="chart-sep-margin-monthly"></div></div>
             </div>
-            <div class="rc-section">
-                <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Monetize carbon credits (€15-30 per tonne of CO2 avoided), achieve CSRD compliance ahead of deadline, attract ESG-focused investors with quantified environmental impact, position HEC as sustainability leader in maritime waste management.</div>
+
+            <div class="section-divider"><h2>Model Summary</h2></div>
+            <div class="chart-card" id="sep-model-summary"></div>
+        </section>
+
+        <!-- PAGE 2: FLEET -->
+        <section class="page" id="page-fleet" style="display:none;">
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1>Predictive Fleet Routing & Demand Forecasting</h1>
+                    <p>XGBoost demand forecaster for 14 ports + route optimization for 25-vessel fleet</p>
+                </div>
+                <div class="page-header-stat">
+                    <div class="page-header-stat-value" id="fleet-header-r2">—</div>
+                    <div class="page-header-stat-label">Forecast R&sup2;</div>
+                </div>
             </div>
-            <div class="rc-impact">
-                <div class="rc-impact-label">Estimated Annual Impact</div>
-                <div class="rc-impact-value">€1.0M — €2.5M (+ strategic positioning)</div>
+
+            <div id="fleet-kpis" class="kpi-row"></div>
+            <div id="fleet-opportunity"></div>
+
+            <div class="section-divider">
+                <h2>Demand Forecast Performance</h2>
+                <p>XGBoost model accuracy &mdash; overall and per-port</p>
             </div>
-        </div>
+            <div class="chart-grid">
+                <div class="chart-card"><div id="chart-demand-scatter"></div></div>
+                <div class="chart-card"><div id="chart-voyage-class"></div></div>
+            </div>
 
-    </div><!-- /roadmap-grid -->
+            <div class="section-divider">
+                <h2>Port Demand Trends</h2>
+                <p>Monthly waste volume by top ports</p>
+            </div>
+            <div class="chart-card"><div id="chart-demand-monthly"></div></div>
 
-    <!-- Total impact -->
-    <div class="money-callout" style="margin-top:32px;">
-        <div class="mc-label">Total Estimated Impact — All 7 Use Cases Combined</div>
-        <div class="mc-value">€25M — €40M per year</div>
-        <div class="mc-desc">Use Cases 1-2 are already built and demonstrated (this platform). Use Cases 3-7 represent the next phase of HEC's AI transformation roadmap.</div>
-    </div>
-</div>
+            <div class="section-divider">
+                <h2>Per-Port Forecast Accuracy</h2>
+                <p>Individual port model metrics</p>
+            </div>
+            <div class="chart-card" id="fleet-port-table"></div>
 
-</div><!-- /tab-content -->
-</div><!-- /main-content -->
+            <div class="section-divider">
+                <h2>Fleet Economics</h2>
+                <p>Revenue, fuel costs, and voyage profitability</p>
+            </div>
+            <div class="chart-grid">
+                <div class="chart-card"><div id="chart-fleet-economics"></div></div>
+                <div class="chart-card"><div id="chart-fleet-fuel"></div></div>
+            </div>
+        </section>
 
-<footer style="text-align:center; padding:24px; color:#546E7A; font-size:0.82rem; border-top:1px solid #E0E4E8; margin-top:40px;">
-    HEC AI Platform &mdash; Hellenic Environmental Center &mdash; Built with Plotly.js &amp; Bootstrap 5
-</footer>
+        <!-- PAGE 3: FUTURE AI TOPICS -->
+        <section class="page" id="page-roadmap" style="display:none;">
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1>Future AI Topics</h1>
+                    <p>5 additional ML/GenAI use cases for the next phase of HEC's transformation</p>
+                </div>
+                <div class="page-header-stat">
+                    <div class="page-header-stat-value">5</div>
+                    <div class="page-header-stat-label">Use Cases</div>
+                </div>
+            </div>
+
+            <div class="roadmap-grid">
+
+                <div class="roadmap-card">
+                    <div class="rc-number">03</div>
+                    <h4>Feedstock Quality Prediction & Dynamic Pricing</h4>
+                    <div class="rc-desc">ML classification of incoming petroleum waste, predicting recovery value and setting dynamic acceptance pricing based on predicted oil yield and contaminant levels.</div>
+                    <div class="rc-details">
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Requirements</div>
+                            <div class="rc-detail-body">Historical lab analysis data (viscosity, density, water/solids content), reception logs with pricing, processing outcomes. NIR or inline sensors for real-time intake characterization.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Implementation</div>
+                            <div class="rc-detail-body">Gradient-boosted classifiers on lab data to predict waste category and yield within 15 min. Pricing engine adjusting acceptance fees by predicted processing cost. Tablet app at reception docks.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Business Outcome</div>
+                            <div class="rc-detail-body">Eliminate unprofitable batches (~8% of intake), reduce lab turnaround from 4 hrs to 15 min, increase margin per batch by 12-18%.</div>
+                        </div>
+                    </div>
+                    <div class="rc-impact-bar"><span class="rc-impact-label">Annual Impact</span><span class="rc-impact-value">€2.5M — €4.0M</span></div>
+                </div>
+
+                <div class="roadmap-card">
+                    <div class="rc-number">04</div>
+                    <h4>Multi-Jurisdictional Regulatory Compliance</h4>
+                    <div class="rc-desc">GenAI RAG system for automated MARPOL compliance reporting across Greece, Germany, Gibraltar, and Malta — each with different waste declaration requirements.</div>
+                    <div class="rc-details">
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Requirements</div>
+                            <div class="rc-detail-body">MARPOL Annex I/II/VI regulations, EU Ship Recycling Directive, national port state control requirements (4+ jurisdictions), historical compliance filings, BDN documents.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Implementation</div>
+                            <div class="rc-detail-body">RAG system indexing regulatory documents. Auto-generate port-specific waste delivery reports. LLM anomaly detection on declarations. Automated translation for multi-language filings.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Business Outcome</div>
+                            <div class="rc-detail-body">Reduce compliance workload by 60%, eliminate filing errors (3-5/month), 100% regulatory coverage, cut filing time from 4 hours to 30 minutes.</div>
+                        </div>
+                    </div>
+                    <div class="rc-impact-bar"><span class="rc-impact-label">Annual Impact</span><span class="rc-impact-value">€800K — €1.5M</span></div>
+                </div>
+
+                <div class="roadmap-card">
+                    <div class="rc-number">05</div>
+                    <h4>Predictive Maintenance for Plants & Fleet</h4>
+                    <div class="rc-desc">Sensor-based ML for predictive maintenance of centrifugal separators, pumps, heat exchangers, and vessel engines — all handling corrosive petroleum waste cargo.</div>
+                    <div class="rc-details">
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Requirements</div>
+                            <div class="rc-detail-body">Vibration sensors on rotating equipment, temperature/pressure logs from PLCs, engine room monitoring data, maintenance work order history (CMMS), spare parts inventory.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Implementation</div>
+                            <div class="rc-detail-body">IoT sensors on critical equipment. Anomaly detection (Isolation Forest, LSTM autoencoders). Remaining-useful-life estimators for bearings and engines. Condition-based maintenance scheduling.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Business Outcome</div>
+                            <div class="rc-detail-body">Reduce unplanned downtime 40-60%, extend equipment life 15-25%, optimize spare parts inventory (-20% carrying cost), prevent catastrophic failures.</div>
+                        </div>
+                    </div>
+                    <div class="rc-impact-bar"><span class="rc-impact-label">Annual Impact</span><span class="rc-impact-value">€3.0M — €5.0M</span></div>
+                </div>
+
+                <div class="roadmap-card">
+                    <div class="rc-number">06</div>
+                    <h4>GenAI Customer & Market Intelligence</h4>
+                    <div class="rc-desc">AI-powered market scanner for port expansion opportunities, automated RFP generation, customer churn prediction, and competitive intelligence across Mediterranean markets.</div>
+                    <div class="rc-details">
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Requirements</div>
+                            <div class="rc-detail-body">CRM data (contracts, volumes, pricing), port authority tender notices, AIS vessel tracking for competitor analysis, shipping market reports, historical RFP win/loss records.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Implementation</div>
+                            <div class="rc-detail-body">Web scrapers for tenders and shipping news. Churn prediction model. GenAI for RFP drafting (RAG over winning proposals). Market intelligence dashboard for competitor movements.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Business Outcome</div>
+                            <div class="rc-detail-body">3-5 new port opportunities/year, RFP win rate 25% to 40%, reduce churn 15-20%, cut RFP response from 2 weeks to 3 days.</div>
+                        </div>
+                    </div>
+                    <div class="rc-impact-bar"><span class="rc-impact-label">Annual Impact</span><span class="rc-impact-value">€1.5M — €3.0M</span></div>
+                </div>
+
+                <div class="roadmap-card">
+                    <div class="rc-number">07</div>
+                    <h4>Carbon Footprint & ESG Analytics</h4>
+                    <div class="rc-desc">AI-powered LCA, automated ESG reporting under EU CSRD, and carbon credit modeling for waste-to-fuel operations under the EU ETS maritime extension.</div>
+                    <div class="rc-details">
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Requirements</div>
+                            <div class="rc-detail-body">Energy consumption per process stage, fuel records (fleet + plant), waste mass balances, emission factors, EU ETS methodology, GHG Protocol Scope 1/2/3, CSRD reporting templates.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Implementation</div>
+                            <div class="rc-detail-body">Automated LCA pipeline (CO2-eq per tonne processed). GenAI for CSRD narrative generation. Carbon credit modeling for recovered fuel displacing fossil fuels. Real-time ESG dashboard.</div>
+                        </div>
+                        <div class="rc-detail-block">
+                            <div class="rc-detail-title">Business Outcome</div>
+                            <div class="rc-detail-body">Monetize carbon credits (€15-30/tCO2 avoided), CSRD compliance, attract ESG investors, position as sustainability leader in maritime waste management.</div>
+                        </div>
+                    </div>
+                    <div class="rc-impact-bar"><span class="rc-impact-label">Annual Impact</span><span class="rc-impact-value">€1.0M — €2.5M</span></div>
+                </div>
+
+            </div>
+
+            <div class="total-impact-banner">
+                <div class="total-impact-label">Total Estimated Impact — All 7 Use Cases</div>
+                <div class="total-impact-value">€25M — €40M / year</div>
+                <div class="total-impact-desc">Use Cases 1-2 built and demonstrated. Use Cases 3-7 represent the next phase.</div>
+            </div>
+        </section>
+
+    </div><!-- /pages-container -->
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://cdn.plot.ly/plotly-2.35.0.min.js" crossorigin="anonymous"></script>
