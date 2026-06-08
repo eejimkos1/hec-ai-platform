@@ -278,8 +278,8 @@ def build_pipeline_samples():
         "oil_recovery_yield_pct"
     ]
 
-    sep_raw = sep_sample[raw_cols].round(2).to_dict(orient="records")
-    sep_feat = sep_sample[[c for c in feat_cols if c in sep_sample.columns]].round(4).to_dict(orient="records")
+    sep_raw = sep_sample[raw_cols].round(2).fillna(0).to_dict(orient="records")
+    sep_feat = sep_sample[[c for c in feat_cols if c in sep_sample.columns]].round(4).fillna(0).to_dict(orient="records")
 
     # --- FLEET ---
     fleet = pd.read_csv(DATA_FEAT / "fleet_features.csv")
@@ -300,8 +300,8 @@ def build_pipeline_samples():
         "expected_margin"
     ]
 
-    fleet_raw = fleet_sample[[c for c in fleet_raw_cols if c in fleet_sample.columns]].round(2).to_dict(orient="records")
-    fleet_feat = fleet_sample[[c for c in fleet_feat_cols if c in fleet_sample.columns]].round(4).to_dict(orient="records")
+    fleet_raw = fleet_sample[[c for c in fleet_raw_cols if c in fleet_sample.columns]].round(2).fillna(0).to_dict(orient="records")
+    fleet_feat = fleet_sample[[c for c in fleet_feat_cols if c in fleet_sample.columns]].round(4).fillna(0).to_dict(orient="records")
 
     result = {
         "separation": {"raw_sample": sep_raw, "features_sample": sep_feat},
