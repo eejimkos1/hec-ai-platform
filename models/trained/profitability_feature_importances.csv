@@ -1,0 +1,12 @@
+feature,importance
+vessel_class_enc,0.9650181
+avg_collection_time_hrs,0.01517217
+cargo_loaded_m3,0.010332644
+port_time_hrs,0.0018053617
+sea_time_hrs,0.001793532
+distance_nm,0.001300141
+is_winter,0.0010997085
+fuel_consumed_mt,0.0010551228
+weather_delays_hrs,0.0010343158
+departure_month,0.00091627415
+collections_count,0.00047270785

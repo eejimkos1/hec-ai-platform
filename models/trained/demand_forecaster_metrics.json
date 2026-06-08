@@ -1,0 +1,108 @@
+{
+  "mape": 5.44,
+  "rmse": 75.79,
+  "r2": 0.971,
+  "train_rows": 17892,
+  "test_rows": 4690,
+  "train_cutoff": "2025-07-01",
+  "port_metrics": [
+    {
+      "port_code": "ALE",
+      "mape": 5.33,
+      "rmse": 69.67,
+      "r2": 0.947,
+      "n_samples": 335
+    },
+    {
+      "port_code": "ALG",
+      "mape": 5.0,
+      "rmse": 78.9,
+      "r2": 0.818,
+      "n_samples": 335
+    },
+    {
+      "port_code": "BCN",
+      "mape": 5.33,
+      "rmse": 59.35,
+      "r2": 0.948,
+      "n_samples": 335
+    },
+    {
+      "port_code": "GEN",
+      "mape": 5.64,
+      "rmse": 53.23,
+      "r2": 0.943,
+      "n_samples": 335
+    },
+    {
+      "port_code": "GIB",
+      "mape": 5.06,
+      "rmse": 73.82,
+      "r2": 0.822,
+      "n_samples": 335
+    },
+    {
+      "port_code": "HAM",
+      "mape": 5.33,
+      "rmse": 95.84,
+      "r2": 0.916,
+      "n_samples": 335
+    },
+    {
+      "port_code": "IST",
+      "mape": 5.62,
+      "rmse": 97.1,
+      "r2": 0.941,
+      "n_samples": 335
+    },
+    {
+      "port_code": "LIM",
+      "mape": 6.2,
+      "rmse": 37.36,
+      "r2": 0.947,
+      "n_samples": 335
+    },
+    {
+      "port_code": "MLT",
+      "mape": 5.75,
+      "rmse": 49.21,
+      "r2": 0.951,
+      "n_samples": 335
+    },
+    {
+      "port_code": "MRS",
+      "mape": 5.36,
+      "rmse": 57.25,
+      "r2": 0.938,
+      "n_samples": 335
+    },
+    {
+      "port_code": "PIR",
+      "mape": 5.32,
+      "rmse": 88.09,
+      "r2": 0.956,
+      "n_samples": 335
+    },
+    {
+      "port_code": "PSD",
+      "mape": 5.54,
+      "rmse": 92.12,
+      "r2": 0.936,
+      "n_samples": 335
+    },
+    {
+      "port_code": "RTM",
+      "mape": 5.56,
+      "rmse": 117.25,
+      "r2": 0.907,
+      "n_samples": 335
+    },
+    {
+      "port_code": "TAN",
+      "mape": 5.08,
+      "rmse": 42.74,
+      "r2": 0.844,
+      "n_samples": 335
+    }
+  ]
+}
