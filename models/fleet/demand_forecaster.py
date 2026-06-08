@@ -52,6 +52,8 @@ _EXCLUDE_COLS = {
     "waste_volume_collected_m3",
     "waste_7d_rolling",
     "waste_30d_rolling",
+    "waste_per_vessel_call",
+    "storage_fill_rate_m3_day",
     "expected_revenue_per_voyage",
     "expected_margin",
 }

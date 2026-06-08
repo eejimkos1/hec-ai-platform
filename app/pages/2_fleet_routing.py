@@ -37,7 +37,7 @@ from app.config import (
     FLEET_COLUMN_DESCRIPTIONS,
     MODELS_DIR,
 )
-from app.components.theme import inject_hec_css, render_money_callout, apply_plotly_theme
+from app.components.theme import inject_hec_css, render_money_callout, render_page_header, render_section_header, apply_plotly_theme
 from app.components.pipeline_viewer import render_data_flow_explanation, render_pipeline_steps
 from app.components.map_viewer import render_port_map
 from app.components.charts import (
@@ -225,11 +225,11 @@ def load_demand_port_metrics() -> pd.DataFrame | None:
 # ---------------------------------------------------------------------------
 # Page header
 # ---------------------------------------------------------------------------
-st.title("Use Case 2: Predictive Fleet Routing & Demand Forecasting")
-st.markdown(
-    "ML demand forecasting + route optimization for HEC's 25-vessel collection fleet"
+render_page_header(
+    "Predictive Fleet Routing & Demand Forecasting",
+    "ML demand forecasting + route optimization for HEC's 25-vessel collection fleet",
+    icon="🚢"
 )
-st.divider()
 
 # ---------------------------------------------------------------------------
 # Tabs
@@ -249,9 +249,8 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(
 # ===========================================================================
 with tab1:
     render_pipeline_steps(current_step=0)
-    st.divider()
 
-    st.subheader("Source Data Explorer")
+    render_section_header("Source Data Explorer", icon="📊", description="Operational tables powering the fleet demand forecasting and routing pipeline")
 
     ports_df = load_ports()
     demand_df = load_port_waste_demand()
@@ -453,10 +452,8 @@ with tab1:
 # ===========================================================================
 with tab2:
     render_pipeline_steps(current_step=1, total_steps=5)
-    st.divider()
 
-    st.subheader("Fleet & Market Analytics")
-    st.markdown("Descriptive analysis of port demand patterns, fleet performance, and market dynamics.")
+    render_section_header("Fleet & Market Analytics", icon="📈", description="Descriptive analysis of port demand patterns, fleet performance, and market dynamics.")
 
     # Load data needed for analytics
     _demand_df = load_port_waste_demand()
@@ -839,9 +836,8 @@ with tab2:
 # ===========================================================================
 with tab3:
     render_pipeline_steps(current_step=2, total_steps=5)
-    st.divider()
 
-    st.subheader("Demand Forecast Pipeline — Feature Engineering")
+    render_section_header("Demand Forecast Pipeline", icon="⚙️", description="Feature engineering: raw port/vessel data transformed into ML-ready time-series features")
 
     fleet_features_df = load_fleet_features()
     route_features_df = load_route_features()
@@ -1045,9 +1041,8 @@ with tab3:
 # ===========================================================================
 with tab4:
     render_pipeline_steps(current_step=3, total_steps=5)
-    st.divider()
 
-    st.subheader("ML Model Performance")
+    render_section_header("ML Model Performance", icon="🤖", description="XGBoost demand forecaster evaluation — overall and per-port accuracy")
 
     demand_metrics = load_demand_metrics()
     predictions_df = load_demand_predictions()
@@ -1260,9 +1255,8 @@ with tab4:
 # ===========================================================================
 with tab5:
     render_pipeline_steps(current_step=4, total_steps=5)
-    st.divider()
 
-    st.subheader("Fleet Optimization Dashboard")
+    render_section_header("Fleet Optimization Dashboard", icon="🎯", description="ML-predicted port demand, fleet status, and optimized vessel-to-port assignment")
     st.markdown(
         "Select a date to see ML-predicted port demand, current fleet status, "
         "and the optimized vessel-to-port assignment plan."

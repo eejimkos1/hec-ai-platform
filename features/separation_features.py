@@ -169,6 +169,9 @@ def compute_feedstock_features(
     cat_fines_risk = (alsi > 60).astype(int)
 
     # Carry forward lab fields used by later feature groups
+    # flash_point_c for safety constraints in the optimizer
+    flash_point = pd.Series(_lookup_lab("flash_point_c", 60.0), index=batch_df.index)
+
     result = pd.DataFrame(
         {
             # Raw fields for downstream use
@@ -181,6 +184,7 @@ def compute_feedstock_features(
             "water_content_pct":            pd.Series(_lookup_lab("water_content_pct", 50.0), index=batch_df.index).values,
             "solids_content_pct":           pd.Series(_lookup_lab("solids_content_pct", 5.0), index=batch_df.index).values,
             "pour_point_c":                 pd.Series(_lookup_lab("pour_point_c", 5.0), index=batch_df.index).values,
+            "flash_point_c":                flash_point.values,
             # Computed features
             "viscosity_temperature_ratio":      viscosity_temperature_ratio.values,
             "emulsion_difficulty_score":        emulsion_difficulty_score.values,
@@ -297,8 +301,8 @@ def compute_process_features(
     pour_point = pd.Series(5.0, index=batch_df.index)
     temperature_vs_pour_point_margin = feed_temp - pour_point
 
-    # capacity_utilization = feed_flow / capacity_m3_hr
-    capacity_utilization = _safe_div(feed_flow, capacity_m3_hr)
+    # capacity_utilization = feed_flow / capacity_m3_hr (capped at 1.0)
+    capacity_utilization = _safe_div(feed_flow, capacity_m3_hr).clip(upper=1.0)
 
     result = pd.DataFrame(
         {
@@ -411,6 +415,9 @@ def compute_temporal_features(
     else:
         hours_since_service = pd.Series(0.0, index=df.index)
 
+    # equipment_condition_score: 100 at 0 hrs, degrades linearly to 0 at 50,000 hrs
+    equipment_condition_score = (1.0 - hours_since_service.clip(0, 50000) / 50000.0) * 100.0
+
     # ---- Similar batch avg yield (same waste_subcategory, last 30d, same facility) ---
     # We join to batch_df which doesn't carry waste_subcategory; we need to add it.
     # Use operator-level rolling logic on what we have in batch_df.
@@ -443,6 +450,7 @@ def compute_temporal_features(
             "rolling_yield_7d":            rolling_yield_7d.values,
             "rolling_energy_7d":           rolling_energy_7d.values,
             "equipment_hours_since_service": hours_since_service.values,
+            "equipment_condition_score":    equipment_condition_score.values,
             "similar_batch_avg_yield":     similar_batch_avg_yield.values,
             "operator_avg_yield":          op_avg_yield.values,
             "ambient_heating_delta":       ambient_heating_delta.values,
@@ -753,6 +761,21 @@ def build_separation_feature_matrix(
     ]
     targets = batch_df[target_cols].reset_index(drop=True)
 
+    # Context columns needed for analytics / filtering (not ML features)
+    context_cols = [
+        "facility_code",
+        "waste_subcategory",
+        "operator_id",
+        "operator_experience_years",
+    ]
+    context_cols = [c for c in context_cols if c in batch_df.columns]
+    context_df = batch_df[context_cols].reset_index(drop=True)
+
+    # processing_date from start_timestamp
+    context_df["processing_date"] = pd.to_datetime(
+        batch_df["start_timestamp"]
+    ).dt.date.values
+
     # Feature columns (all except raw pass-through fields and targets)
     feature_only_cols = [
         # --- Category A ---
@@ -774,6 +797,7 @@ def build_separation_feature_matrix(
         "water_content_pct",
         "solids_content_pct",
         "pour_point_c",
+        "flash_point_c",
         # --- Category B ---
         "specific_energy_input",
         "g_force",
@@ -794,6 +818,7 @@ def build_separation_feature_matrix(
         "rolling_yield_7d",
         "rolling_energy_7d",
         "equipment_hours_since_service",
+        "equipment_condition_score",
         "similar_batch_avg_yield",
         "operator_avg_yield",
         "ambient_heating_delta",
@@ -817,7 +842,7 @@ def build_separation_feature_matrix(
     keep = [c for c in feature_only_cols if c in feature_df.columns]
     feature_df = feature_df[keep].reset_index(drop=True)
 
-    final_df = pd.concat([targets, feature_df], axis=1)
+    final_df = pd.concat([targets, context_df, feature_df], axis=1)
 
     logger.info("Feature matrix shape: %s", final_df.shape)
     logger.info("Total nulls: %d", final_df.isnull().sum().sum())

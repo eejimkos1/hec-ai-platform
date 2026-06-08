@@ -32,7 +32,7 @@ from app.config import (
     AVG_BATCHES_PER_YEAR,
     check_data_status,
 )
-from app.components.theme import inject_hec_css, render_money_callout, apply_plotly_theme
+from app.components.theme import inject_hec_css, render_money_callout, render_page_header, apply_plotly_theme
 
 st.set_page_config(
     page_title=PAGE_TITLE,
@@ -139,12 +139,11 @@ data_missing = sep_df is None or voyage_df is None
 # Main content
 # ---------------------------------------------------------------------------
 
-st.title("HEC AI Platform — Operations Intelligence")
-st.markdown(
-    "This platform applies machine learning to HEC's core operations: petroleum waste separation "
-    "process control and fleet collection logistics. "
-    "Every view follows the pipeline: "
-    "**Source Data → Analytics → Feature Engineering → ML Model → Results**."
+render_page_header(
+    "HEC AI Platform — Operations Intelligence",
+    "Applying machine learning to petroleum waste separation process control and fleet collection logistics. "
+    "Every view follows: Source Data → Analytics → Feature Engineering → ML Model → Results.",
+    icon="⚓"
 )
 
 st.divider()

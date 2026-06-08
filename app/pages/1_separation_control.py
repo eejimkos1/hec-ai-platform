@@ -53,6 +53,8 @@ from app.components.charts import (
 from app.components.theme import (
     inject_hec_css,
     render_money_callout,
+    render_page_header,
+    render_section_header,
     apply_plotly_theme,
 )
 
@@ -198,12 +200,11 @@ def _safe_normalize(series: pd.Series) -> pd.Series:
 # PAGE HEADER
 # ============================================================================
 
-st.title("Use Case 1: AI-Optimized Separation Process Control")
-st.markdown(
-    "ML-driven optimization of 3-phase petroleum waste separation "
-    "to maximise oil recovery yield"
+render_page_header(
+    "AI-Optimized Separation Process Control",
+    "ML-driven optimization of 3-phase petroleum waste separation to maximise oil recovery yield",
+    icon="🛢️"
 )
-st.divider()
 
 # ── pipeline data flow legend ────────────────────────────────────────────────
 render_data_flow_explanation(
@@ -247,11 +248,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # ============================================================================
 with tab1:
     render_pipeline_steps(current_step=0)
-    st.subheader("Source Data Explorer")
-    st.markdown(
-        "Three operational tables feed the separation ML pipeline. "
-        "Select a table below to browse its contents."
-    )
+    render_section_header("Source Data Explorer", icon="📊", description="Three operational tables feed the separation ML pipeline. Select a table below to browse its contents.")
 
     wrl_df = load_waste_reception()
     lab_df = load_lab_analysis()
@@ -422,11 +419,7 @@ with tab1:
 # ============================================================================
 with tab2:
     render_pipeline_steps(current_step=1, total_steps=5)
-    st.subheader("Operational Analytics")
-    st.markdown(
-        "Descriptive analysis of separation performance across facilities, "
-        "operators, and waste types."
-    )
+    render_section_header("Operational Analytics", icon="📈", description="Descriptive analysis of separation performance across facilities, operators, and waste types.")
 
     sep_features = load_separation_features()
     pb_df_t2 = load_processing_batch()
@@ -712,10 +705,9 @@ with tab2:
 # ============================================================================
 with tab3:
     render_pipeline_steps(current_step=2, total_steps=5)
-    st.subheader("Feature Engineering Pipeline")
+    render_section_header("Feature Engineering Pipeline", icon="⚙️", description="Raw tables joined, cleaned, and enriched into the separation_features.csv matrix. Green columns are engineered features.")
     st.markdown(
-        "The raw tables are joined, cleaned, and enriched to produce the "
-        "`separation_features.csv` feature matrix (12,178 rows × 48 columns). "
+        "The feature matrix has **12,178 rows × 55 columns**. "
         "Columns highlighted in **green** are engineered features; others come "
         "directly from the source tables."
     )
@@ -881,7 +873,7 @@ with tab3:
 # ============================================================================
 with tab4:
     render_pipeline_steps(current_step=3, total_steps=5)
-    st.subheader("ML Model Performance")
+    render_section_header("ML Model Performance", icon="🤖", description="XGBoost yield regressor and Random Forest quality classifier evaluation")
 
     yield_artifact = load_yield_model()
     quality_artifact = load_quality_classifier()
@@ -986,7 +978,7 @@ with tab4:
 # ============================================================================
 with tab5:
     render_pipeline_steps(current_step=4, total_steps=5)
-    st.subheader("Optimization Engine")
+    render_section_header("Optimization Engine", icon="🎯", description="SciPy-optimized process parameters with safety constraints and financial enrichment")
     st.markdown(
         "The optimizer uses the trained XGBoost model as a surrogate objective and "
         "runs **scipy L-BFGS-B** to find process parameters that maximise predicted "
