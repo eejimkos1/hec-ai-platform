@@ -13,7 +13,7 @@
 <div class="header-banner">
     <div style="font-size:2rem; margin-bottom:4px;">⚓</div>
     <h1>HEC AI Platform — Operations Intelligence</h1>
-    <p>Machine learning for petroleum waste separation process control and fleet collection logistics</p>
+    <p>Machine learning for petroleum waste separation process control and fleet collection logistics | Hellenic Environmental Center</p>
 </div>
 
 <!-- Loading -->
@@ -22,60 +22,106 @@
 <!-- Main Content -->
 <div id="main-content" style="display:none;">
 
-<!-- Tabs -->
+<!-- 3 MAIN TABS -->
 <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-separation" role="tab">🛢️ Separation Control</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-fleet" role="tab">🚢 Fleet & Demand</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-financial" role="tab">💰 Financial Overview</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-roadmap" role="tab">🚀 Future AI Roadmap</a></li>
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-separation" role="tab">🛢️ UC1: Separation Process Control</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-fleet" role="tab">🚢 UC2: Fleet Routing & Demand</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-roadmap" role="tab">🚀 Future AI Topics</a></li>
 </ul>
 
 <div class="tab-content">
 
-<!-- TAB 1: Separation -->
+<!-- ===================================================================== -->
+<!-- TAB 1: USE CASE 1 — SEPARATION PROCESS CONTROL                        -->
+<!-- ===================================================================== -->
 <div class="tab-pane fade show active" id="tab-separation" role="tabpanel">
-    <div class="section-header"><h3>🛢️ AI-Optimized Separation Process Control</h3><p>XGBoost yield predictor and Random Forest quality classifier for 3-phase petroleum waste separation</p></div>
+    <div class="section-header">
+        <h3>🛢️ AI-Optimized Separation Process Control</h3>
+        <p>XGBoost yield predictor and Random Forest quality classifier for 3-phase petroleum waste separation (oil/water/solids)</p>
+    </div>
+
+    <!-- Financial KPIs -->
     <div id="sep-kpis" class="kpi-row"></div>
+
+    <!-- AI Opportunity callout -->
+    <div id="sep-opportunity"></div>
+
+    <!-- Charts row 1 -->
+    <div class="section-header"><h3>📊 Model Performance</h3><p>Yield prediction accuracy and feature importance analysis</p></div>
     <div class="chart-grid">
         <div class="chart-container"><div id="chart-feat-imp"></div></div>
         <div class="chart-container"><div id="chart-pred-scatter"></div></div>
+    </div>
+
+    <!-- Charts row 2 -->
+    <div class="section-header"><h3>📈 Operational Analytics</h3><p>Facility-level performance and quality breakdown</p></div>
+    <div class="chart-grid">
         <div class="chart-container"><div id="chart-yield-fac"></div></div>
         <div class="chart-container"><div id="chart-quality"></div></div>
     </div>
-    <div class="chart-container"><div id="chart-sep-monthly"></div></div>
+
+    <!-- Monthly trend -->
+    <div class="section-header"><h3>📅 Monthly Trends</h3><p>Yield and margin evolution over time</p></div>
+    <div class="chart-grid">
+        <div class="chart-container"><div id="chart-sep-yield-monthly"></div></div>
+        <div class="chart-container"><div id="chart-sep-margin-monthly"></div></div>
+    </div>
+
+    <!-- Model summary -->
+    <div class="section-header"><h3>🤖 Model Summary</h3></div>
+    <div id="sep-model-summary" class="chart-container"></div>
 </div>
 
-<!-- TAB 2: Fleet -->
+<!-- ===================================================================== -->
+<!-- TAB 2: USE CASE 2 — FLEET ROUTING & DEMAND FORECASTING                -->
+<!-- ===================================================================== -->
 <div class="tab-pane fade" id="tab-fleet" role="tabpanel">
-    <div class="section-header"><h3>🚢 Predictive Fleet Routing & Demand Forecasting</h3><p>XGBoost demand forecaster across 14 Mediterranean & Northern European ports</p></div>
+    <div class="section-header">
+        <h3>🚢 Predictive Fleet Routing & Demand Forecasting</h3>
+        <p>XGBoost demand forecaster for 14 ports + route optimization for 25-vessel collection fleet across Mediterranean & Northern Europe</p>
+    </div>
+
+    <!-- Financial KPIs -->
     <div id="fleet-kpis" class="kpi-row"></div>
+
+    <!-- AI Opportunity callout -->
+    <div id="fleet-opportunity"></div>
+
+    <!-- Charts row 1 -->
+    <div class="section-header"><h3>📊 Demand Forecast Performance</h3><p>XGBoost model accuracy — overall and per-port</p></div>
     <div class="chart-grid">
         <div class="chart-container"><div id="chart-demand-scatter"></div></div>
         <div class="chart-container"><div id="chart-voyage-class"></div></div>
     </div>
-    <div class="chart-container"><div id="chart-demand-monthly"></div></div>
-    <div class="section-header"><h3>📊 Per-Port Forecast Accuracy</h3></div>
-    <div class="chart-container" id="fleet-port-table"></div>
-</div>
 
-<!-- TAB 3: Financial -->
-<div class="tab-pane fade" id="tab-financial" role="tabpanel">
-    <div class="section-header"><h3>💰 Financial Impact Summary</h3><p>Combined economics of AI-optimized separation and fleet operations</p></div>
-    <div id="fin-opportunity"></div>
-    <div id="fin-kpis" class="kpi-row"></div>
+    <!-- Monthly demand -->
+    <div class="section-header"><h3>📈 Port Demand Trends</h3><p>Monthly waste volume by top ports with interactive range slider</p></div>
+    <div class="chart-container"><div id="chart-demand-monthly"></div></div>
+
+    <!-- Per-port table -->
+    <div class="section-header"><h3>📋 Per-Port Forecast Accuracy</h3><p>Individual port model metrics (MAPE, RMSE, R²)</p></div>
+    <div class="chart-container" id="fleet-port-table"></div>
+
+    <!-- Fleet economics -->
+    <div class="section-header"><h3>💰 Fleet Economics</h3><p>Revenue, fuel costs, and voyage profitability</p></div>
     <div class="chart-grid">
-        <div class="chart-container"><div id="chart-fin-monthly"></div></div>
-        <div class="chart-container"><div id="chart-fin-breakdown"></div></div>
+        <div class="chart-container"><div id="chart-fleet-economics"></div></div>
+        <div class="chart-container"><div id="chart-fleet-fuel"></div></div>
     </div>
 </div>
 
-<!-- TAB 4: Roadmap -->
+<!-- ===================================================================== -->
+<!-- TAB 3: FUTURE AI TOPICS (USE CASES 3-7)                               -->
+<!-- ===================================================================== -->
 <div class="tab-pane fade" id="tab-roadmap" role="tabpanel">
-    <div class="section-header"><h3>🚀 Future AI Roadmap — 5 Additional Use Cases</h3><p>Identified opportunities for HEC's next phase of AI transformation</p></div>
+    <div class="section-header">
+        <h3>🚀 Future AI Topics — Next Phase of HEC's Transformation</h3>
+        <p>5 additional ML/GenAI use cases identified for Hellenic Environmental Center. Each includes what it does, what's needed, how to build it, and expected business impact.</p>
+    </div>
 
     <div class="roadmap-grid">
 
-        <!-- UC3 -->
+        <!-- UC3: Feedstock Quality -->
         <div class="roadmap-card">
             <div class="rc-icon">🧪</div>
             <h4>3. Feedstock Quality Prediction & Dynamic Pricing</h4>
@@ -98,7 +144,7 @@
             </div>
         </div>
 
-        <!-- UC4 -->
+        <!-- UC4: Regulatory Compliance -->
         <div class="roadmap-card">
             <div class="rc-icon">📋</div>
             <h4>4. Multi-Jurisdictional Regulatory Compliance</h4>
@@ -121,7 +167,7 @@
             </div>
         </div>
 
-        <!-- UC5 -->
+        <!-- UC5: Predictive Maintenance -->
         <div class="roadmap-card">
             <div class="rc-icon">🔧</div>
             <h4>5. Predictive Maintenance for Plants & Fleet</h4>
@@ -144,7 +190,7 @@
             </div>
         </div>
 
-        <!-- UC6 -->
+        <!-- UC6: Market Intelligence -->
         <div class="roadmap-card">
             <div class="rc-icon">🤖</div>
             <h4>6. GenAI Customer & Market Intelligence</h4>
@@ -167,7 +213,7 @@
             </div>
         </div>
 
-        <!-- UC7 -->
+        <!-- UC7: Carbon & ESG -->
         <div class="roadmap-card">
             <div class="rc-icon">🌍</div>
             <h4>7. Carbon Footprint & ESG Analytics</h4>
@@ -182,7 +228,7 @@
             </div>
             <div class="rc-section">
                 <div class="rc-section-title">What They Will Achieve</div>
-                <div class="rc-section-body">Monetize carbon credits (€15-30 per tonne of CO2 avoided), achieve CSRD compliance ahead of 2025 deadline, attract ESG-focused investors with quantified environmental impact, position HEC as sustainability leader in maritime waste management.</div>
+                <div class="rc-section-body">Monetize carbon credits (€15-30 per tonne of CO2 avoided), achieve CSRD compliance ahead of deadline, attract ESG-focused investors with quantified environmental impact, position HEC as sustainability leader in maritime waste management.</div>
             </div>
             <div class="rc-impact">
                 <div class="rc-impact-label">Estimated Annual Impact</div>
@@ -192,10 +238,11 @@
 
     </div><!-- /roadmap-grid -->
 
+    <!-- Total impact -->
     <div class="money-callout" style="margin-top:32px;">
         <div class="mc-label">Total Estimated Impact — All 7 Use Cases Combined</div>
         <div class="mc-value">€25M — €40M per year</div>
-        <div class="mc-desc">Use Cases 1-2 already built (this platform). Use Cases 3-7 represent the next phase of HEC's AI transformation roadmap.</div>
+        <div class="mc-desc">Use Cases 1-2 are already built and demonstrated (this platform). Use Cases 3-7 represent the next phase of HEC's AI transformation roadmap.</div>
     </div>
 </div>
 
@@ -203,7 +250,7 @@
 </div><!-- /main-content -->
 
 <footer style="text-align:center; padding:24px; color:#546E7A; font-size:0.82rem; border-top:1px solid #E0E4E8; margin-top:40px;">
-    HEC AI Platform &mdash; Hellenic Environmental Center &mdash; Built with Plotly.js &amp; Bootstrap
+    HEC AI Platform &mdash; Hellenic Environmental Center &mdash; Built with Plotly.js &amp; Bootstrap 5
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
