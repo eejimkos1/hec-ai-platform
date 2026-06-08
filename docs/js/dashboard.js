@@ -140,8 +140,9 @@ function renderRecipes(containerId, recipes) {
 // ============================
 // WHAT-IF RENDERER
 // ============================
-function renderWhatIf(containerId, config, type) {
+function renderWhatIf(containerId, config, useCase) {
     var features = config.features;
+    var isSep = (useCase === 'separation');
     var html = '<div class="whatif-grid"><div class="whatif-sliders">';
     for (var i = 0; i < features.length; i++) {
         var f = features[i];
@@ -152,23 +153,23 @@ function renderWhatIf(containerId, config, type) {
             '<input type="range" class="whatif-range" data-feature="' + f.name + '" ' +
             'min="' + f.min + '" max="' + f.max + '" step="' + step + '" value="' + f.default + '">' +
             '<div class="whatif-value-row"><span class="whatif-min">' + f.min + '</span>' +
-            '<span class="whatif-current" id="val-' + type + '-' + f.name + '">' + f.default + '</span>' +
+            '<span class="whatif-current" id="val-' + containerId + '-' + f.name + '">' + f.default + '</span>' +
             '<span class="whatif-max">' + f.max + '</span></div>' +
             '</div>';
     }
     html += '</div><div class="whatif-result">';
-    if (type === 'separation') {
+    if (isSep) {
         html += '<div class="whatif-result-title">Predicted Yield</div>' +
-            '<div class="whatif-result-value" id="whatif-sep-yield">' + config.baseline_yield.toFixed(1) + '%</div>' +
-            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-sep-bar" style="width:' + ((config.baseline_yield / 100) * 100) + '%"></div></div>' +
+            '<div class="whatif-result-value" id="whatif-' + containerId + '-val">' + config.baseline_yield.toFixed(1) + '%</div>' +
+            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-' + containerId + '-bar" style="width:' + ((config.baseline_yield / 100) * 100) + '%"></div></div>' +
             '<div class="whatif-result-sub">Baseline: ' + config.baseline_yield.toFixed(1) + '% | Range: ' + config.yield_range[0] + '% – ' + config.yield_range[1] + '%</div>' +
-            '<div class="whatif-result-delta" id="whatif-sep-delta">No change</div>';
+            '<div class="whatif-result-delta" id="whatif-' + containerId + '-delta">No change</div>';
     } else {
         html += '<div class="whatif-result-title">Predicted Demand</div>' +
-            '<div class="whatif-result-value" id="whatif-fleet-demand">' + Math.round(config.baseline_demand) + ' m³</div>' +
-            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-fleet-bar" style="width:50%"></div></div>' +
+            '<div class="whatif-result-value" id="whatif-' + containerId + '-val">' + Math.round(config.baseline_demand) + ' m³</div>' +
+            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-' + containerId + '-bar" style="width:50%"></div></div>' +
             '<div class="whatif-result-sub">Baseline: ' + Math.round(config.baseline_demand) + ' m³ | Range: ' + config.demand_range[0] + ' – ' + config.demand_range[1] + ' m³</div>' +
-            '<div class="whatif-result-delta" id="whatif-fleet-delta">No change</div>';
+            '<div class="whatif-result-delta" id="whatif-' + containerId + '-delta">No change</div>';
     }
     html += '</div></div>';
     document.getElementById(containerId).innerHTML = html;
@@ -176,48 +177,52 @@ function renderWhatIf(containerId, config, type) {
     // Wire up slider events
     var sliders = document.getElementById(containerId).querySelectorAll('.whatif-range');
     for (var i = 0; i < sliders.length; i++) {
-        sliders[i].addEventListener('input', function() {
-            var fname = this.getAttribute('data-feature');
-            var valEl = document.getElementById('val-' + type + '-' + fname);
-            if (valEl) valEl.textContent = parseFloat(this.value).toFixed(this.step < 1 ? 2 : 0);
-            computeWhatIf(type);
-        });
+        sliders[i].addEventListener('input', (function(cId, uc) {
+            return function() {
+                var fname = this.getAttribute('data-feature');
+                var valEl = document.getElementById('val-' + cId + '-' + fname);
+                if (valEl) valEl.textContent = parseFloat(this.value).toFixed(this.step < 1 ? 2 : 0);
+                computeWhatIf(cId, uc);
+            };
+        })(containerId, useCase));
     }
 }
 
-function computeWhatIf(type) {
-    var config = DATA.whatif[type];
+function computeWhatIf(containerId, useCase) {
+    var isSep = (useCase === 'separation');
+    var config = isSep ? DATA.whatif.separation : DATA.whatif.fleet;
     var features = config.features;
     var totalDelta = 0;
 
+    var container = document.getElementById(containerId);
     for (var i = 0; i < features.length; i++) {
         var f = features[i];
-        var slider = document.querySelector('#' + type + '-whatif .whatif-range[data-feature="' + f.name + '"]');
+        var slider = container.querySelector('.whatif-range[data-feature="' + f.name + '"]');
         if (!slider) continue;
         var currentVal = parseFloat(slider.value);
         var normalizedDelta = (currentVal - f.mean) / (f.std || 1);
         totalDelta += normalizedDelta * f.importance;
     }
 
-    if (type === 'separation') {
+    if (isSep) {
         var yieldRange = config.yield_range[1] - config.yield_range[0];
         var predicted = config.baseline_yield + totalDelta * yieldRange * 0.4;
         predicted = Math.max(config.yield_range[0], Math.min(config.yield_range[1], predicted));
-        document.getElementById('whatif-sep-yield').textContent = predicted.toFixed(1) + '%';
-        document.getElementById('whatif-sep-bar').style.width = ((predicted / 100) * 100) + '%';
+        document.getElementById('whatif-' + containerId + '-val').textContent = predicted.toFixed(1) + '%';
+        document.getElementById('whatif-' + containerId + '-bar').style.width = ((predicted / 100) * 100) + '%';
         var delta = predicted - config.baseline_yield;
-        var deltaEl = document.getElementById('whatif-sep-delta');
+        var deltaEl = document.getElementById('whatif-' + containerId + '-delta');
         deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(2) + ' pp vs baseline';
         deltaEl.className = 'whatif-result-delta ' + (delta >= 0 ? 'positive' : 'negative');
     } else {
         var demandRange = config.demand_range[1] - config.demand_range[0];
         var predicted = config.baseline_demand + totalDelta * demandRange * 0.3;
         predicted = Math.max(config.demand_range[0], Math.min(config.demand_range[1], predicted));
-        document.getElementById('whatif-fleet-demand').textContent = Math.round(predicted) + ' m³';
+        document.getElementById('whatif-' + containerId + '-val').textContent = Math.round(predicted) + ' m³';
         var barPct = ((predicted - config.demand_range[0]) / demandRange) * 100;
-        document.getElementById('whatif-fleet-bar').style.width = barPct + '%';
+        document.getElementById('whatif-' + containerId + '-bar').style.width = barPct + '%';
         var delta = predicted - config.baseline_demand;
-        var deltaEl = document.getElementById('whatif-fleet-delta');
+        var deltaEl = document.getElementById('whatif-' + containerId + '-delta');
         deltaEl.textContent = (delta >= 0 ? '+' : '') + Math.round(delta) + ' m³ vs baseline';
         deltaEl.className = 'whatif-result-delta ' + (delta >= 0 ? 'positive' : 'negative');
     }
@@ -360,7 +365,7 @@ function renderSeparation() {
         '</tbody></table>';
 
     // STEP 4: What-If
-    renderWhatIf('sep-whatif', DATA.whatif.separation, 'sep');
+    renderWhatIf('sep-whatif', DATA.whatif.separation, 'separation');
 }
 
 // ============================
