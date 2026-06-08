@@ -363,9 +363,6 @@ function renderSeparation() {
         '<tr><td>Quality Classifier</td><td>Random Forest</td><td>Accuracy</td><td>' + fmtPct((qm.accuracy || 0) * 100) + '</td><td>' + fmtNum(m.train_size || 0) + '</td><td>' + fmtNum(m.test_size || 0) + '</td></tr>' +
         '<tr><td>Profitability</td><td>XGBoost</td><td>R²</td><td>' + ((DATA.models.profitability || {}).r2 || 0).toFixed(3) + '</td><td>' + fmtNum((DATA.models.profitability || {}).train_rows || 0) + '</td><td>' + fmtNum((DATA.models.profitability || {}).test_rows || 0) + '</td></tr>' +
         '</tbody></table>';
-
-    // STEP 4: What-If
-    renderWhatIf('sep-whatif', DATA.whatif.separation, 'separation');
 }
 
 // ============================
