@@ -70,38 +70,90 @@
                 </div>
             </div>
 
-            <div id="sep-kpis" class="kpi-row"></div>
-            <div id="sep-opportunity"></div>
-
-            <div class="section-divider">
-                <h2>Model Performance</h2>
-                <p>Yield prediction accuracy and feature importance analysis</p>
-            </div>
-            <div class="chart-grid">
-                <div class="chart-card"><div id="chart-feat-imp"></div></div>
-                <div class="chart-card"><div id="chart-pred-scatter"></div></div>
-            </div>
-
-            <div class="section-divider">
-                <h2>Operational Analytics</h2>
-                <p>Facility-level performance and quality breakdown</p>
-            </div>
-            <div class="chart-grid">
-                <div class="chart-card"><div id="chart-yield-fac"></div></div>
-                <div class="chart-card"><div id="chart-quality"></div></div>
+            <!-- STEP 1: RAW DATA -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">1</span>
+                    <div>
+                        <h2>Raw Data</h2>
+                        <p>Laboratory analysis &amp; process sensor readings — the inputs our models consume</p>
+                    </div>
+                </div>
+                <div class="pipeline-table-wrap">
+                    <div id="sep-raw-table"></div>
+                </div>
             </div>
 
-            <div class="section-divider">
-                <h2>Monthly Trends</h2>
-                <p>Yield and margin evolution over time</p>
-            </div>
-            <div class="chart-grid">
-                <div class="chart-card"><div id="chart-sep-yield-monthly"></div></div>
-                <div class="chart-card"><div id="chart-sep-margin-monthly"></div></div>
+            <!-- STEP 2: FEATURE ENGINEERING -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">2</span>
+                    <div>
+                        <h2>Feature Engineering</h2>
+                        <p>Computed features derived from raw data — domain knowledge encoded as new columns</p>
+                    </div>
+                </div>
+                <div class="pipeline-table-wrap">
+                    <div id="sep-feat-table"></div>
+                </div>
+                <div class="recipe-grid" id="sep-recipes"></div>
             </div>
 
-            <div class="section-divider"><h2>Model Summary</h2></div>
-            <div class="chart-card" id="sep-model-summary"></div>
+            <!-- STEP 3: ML/DS RESULTS -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">3</span>
+                    <div>
+                        <h2>ML/DS Results</h2>
+                        <p>Model predictions, KPIs, and performance analytics</p>
+                    </div>
+                </div>
+
+                <div id="sep-kpis" class="kpi-row"></div>
+                <div id="sep-opportunity"></div>
+
+                <div class="section-divider">
+                    <h2>Model Performance</h2>
+                    <p>Yield prediction accuracy and feature importance analysis</p>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card"><div id="chart-feat-imp"></div></div>
+                    <div class="chart-card"><div id="chart-pred-scatter"></div></div>
+                </div>
+
+                <div class="section-divider">
+                    <h2>Operational Analytics</h2>
+                    <p>Facility-level performance and quality breakdown</p>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card"><div id="chart-yield-fac"></div></div>
+                    <div class="chart-card"><div id="chart-quality"></div></div>
+                </div>
+
+                <div class="section-divider">
+                    <h2>Monthly Trends</h2>
+                    <p>Yield and margin evolution over time</p>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card"><div id="chart-sep-yield-monthly"></div></div>
+                    <div class="chart-card"><div id="chart-sep-margin-monthly"></div></div>
+                </div>
+
+                <div class="section-divider"><h2>Model Summary</h2></div>
+                <div class="chart-card" id="sep-model-summary"></div>
+            </div>
+
+            <!-- STEP 4: WHAT-IF SCENARIO -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">4</span>
+                    <div>
+                        <h2>What-If Scenario</h2>
+                        <p>Adjust process parameters to see predicted yield change in real time</p>
+                    </div>
+                </div>
+                <div class="whatif-panel" id="sep-whatif"></div>
+            </div>
         </section>
 
         <!-- PAGE 2: FLEET -->
@@ -117,37 +169,89 @@
                 </div>
             </div>
 
-            <div id="fleet-kpis" class="kpi-row"></div>
-            <div id="fleet-opportunity"></div>
+            <!-- STEP 1: RAW DATA -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">1</span>
+                    <div>
+                        <h2>Raw Data</h2>
+                        <p>Port waste demand logs &amp; vessel call records — daily observations from 14 ports</p>
+                    </div>
+                </div>
+                <div class="pipeline-table-wrap">
+                    <div id="fleet-raw-table"></div>
+                </div>
+            </div>
 
-            <div class="section-divider">
-                <h2>Demand Forecast Performance</h2>
-                <p>XGBoost model accuracy &mdash; overall and per-port</p>
-            </div>
-            <div class="chart-grid">
-                <div class="chart-card"><div id="chart-demand-scatter"></div></div>
-                <div class="chart-card"><div id="chart-voyage-class"></div></div>
+            <!-- STEP 2: FEATURE ENGINEERING -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">2</span>
+                    <div>
+                        <h2>Feature Engineering</h2>
+                        <p>Rolling averages, economic estimates, and temporal features built from raw demand data</p>
+                    </div>
+                </div>
+                <div class="pipeline-table-wrap">
+                    <div id="fleet-feat-table"></div>
+                </div>
+                <div class="recipe-grid" id="fleet-recipes"></div>
             </div>
 
-            <div class="section-divider">
-                <h2>Port Demand Trends</h2>
-                <p>Monthly waste volume by top ports</p>
-            </div>
-            <div class="chart-card"><div id="chart-demand-monthly"></div></div>
+            <!-- STEP 3: ML/DS RESULTS -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">3</span>
+                    <div>
+                        <h2>ML/DS Results</h2>
+                        <p>Demand forecast accuracy, voyage economics, and port-level analytics</p>
+                    </div>
+                </div>
 
-            <div class="section-divider">
-                <h2>Per-Port Forecast Accuracy</h2>
-                <p>Individual port model metrics</p>
-            </div>
-            <div class="chart-card" id="fleet-port-table"></div>
+                <div id="fleet-kpis" class="kpi-row"></div>
+                <div id="fleet-opportunity"></div>
 
-            <div class="section-divider">
-                <h2>Fleet Economics</h2>
-                <p>Revenue, fuel costs, and voyage profitability</p>
+                <div class="section-divider">
+                    <h2>Demand Forecast Performance</h2>
+                    <p>XGBoost model accuracy &mdash; overall and per-port</p>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card"><div id="chart-demand-scatter"></div></div>
+                    <div class="chart-card"><div id="chart-voyage-class"></div></div>
+                </div>
+
+                <div class="section-divider">
+                    <h2>Port Demand Trends</h2>
+                    <p>Monthly waste volume by top ports</p>
+                </div>
+                <div class="chart-card"><div id="chart-demand-monthly"></div></div>
+
+                <div class="section-divider">
+                    <h2>Per-Port Forecast Accuracy</h2>
+                    <p>Individual port model metrics</p>
+                </div>
+                <div class="chart-card" id="fleet-port-table"></div>
+
+                <div class="section-divider">
+                    <h2>Fleet Economics</h2>
+                    <p>Revenue, fuel costs, and voyage profitability</p>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card"><div id="chart-fleet-economics"></div></div>
+                    <div class="chart-card"><div id="chart-fleet-fuel"></div></div>
+                </div>
             </div>
-            <div class="chart-grid">
-                <div class="chart-card"><div id="chart-fleet-economics"></div></div>
-                <div class="chart-card"><div id="chart-fleet-fuel"></div></div>
+
+            <!-- STEP 4: WHAT-IF SCENARIO -->
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">
+                    <span class="pipeline-step-number">4</span>
+                    <div>
+                        <h2>What-If Scenario</h2>
+                        <p>Adjust port conditions to predict waste demand &amp; collection urgency</p>
+                    </div>
+                </div>
+                <div class="whatif-panel" id="fleet-whatif"></div>
             </div>
         </section>
 

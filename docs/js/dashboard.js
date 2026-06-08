@@ -1,6 +1,5 @@
 /**
- * HEC AI Platform — Multi-page Dashboard
- * Sidebar navigation with full page replacement
+ * HEC AI Platform — Multi-page Dashboard with Pipeline View + What-If
  */
 
 var HEC_COLORS = {
@@ -31,7 +30,6 @@ var PLOTLY_LAYOUT = {
 var DATA = {};
 var rendered = { separation: false, fleet: false };
 
-// Page titles for the topbar
 var PAGE_TITLES = {
     separation: 'AI-Optimized Separation Process Control',
     fleet: 'Predictive Fleet Routing & Demand Forecasting',
@@ -42,7 +40,7 @@ var PAGE_TITLES = {
 // DATA LOADING
 // ============================
 async function loadData() {
-    var files = ['separation', 'fleet', 'models', 'financial'];
+    var files = ['separation', 'fleet', 'models', 'financial', 'pipeline', 'whatif'];
     for (var i = 0; i < files.length; i++) {
         var resp = await fetch('data/' + files[i] + '.json');
         DATA[files[i]] = await resp.json();
@@ -60,34 +58,25 @@ function fmtNum(val) { return Math.round(val).toLocaleString('en'); }
 // NAVIGATION
 // ============================
 function switchPage(pageName) {
-    // Hide all pages
     var pages = document.querySelectorAll('.page');
-    for (var i = 0; i < pages.length; i++) {
-        pages[i].style.display = 'none';
-    }
+    for (var i = 0; i < pages.length; i++) pages[i].style.display = 'none';
 
-    // Show target page
     var target = document.getElementById('page-' + pageName);
     if (target) {
         target.style.display = 'block';
         target.style.animation = 'none';
-        target.offsetHeight; // trigger reflow
+        target.offsetHeight;
         target.style.animation = 'fadeIn 0.3s ease';
     }
 
-    // Update sidebar active state
     var links = document.querySelectorAll('.sidebar-link');
     for (var i = 0; i < links.length; i++) {
         links[i].classList.remove('active');
-        if (links[i].getAttribute('data-page') === pageName) {
-            links[i].classList.add('active');
-        }
+        if (links[i].getAttribute('data-page') === pageName) links[i].classList.add('active');
     }
 
-    // Update topbar title
     document.getElementById('topbar-title').textContent = PAGE_TITLES[pageName] || '';
 
-    // Render charts on first visit
     if (pageName === 'separation' && !rendered.separation) {
         renderSeparation();
         rendered.separation = true;
@@ -97,26 +86,173 @@ function switchPage(pageName) {
         rendered.fleet = true;
     }
 
-    // Trigger resize for Plotly
     window.dispatchEvent(new Event('resize'));
-
-    // Close mobile sidebar
     document.getElementById('sidebar').classList.remove('open');
 }
 
 // ============================
-// SEPARATION CHARTS
+// PIPELINE TABLE RENDERER
+// ============================
+function renderPipelineTable(containerId, rows, engineeredCols) {
+    if (!rows || !rows.length) return;
+    var cols = Object.keys(rows[0]);
+    var html = '<div class="pipeline-table-scroll"><table class="data-table pipeline-table"><thead><tr>';
+    for (var c = 0; c < cols.length; c++) {
+        var isEng = engineeredCols && engineeredCols.indexOf(cols[c]) !== -1;
+        var label = cols[c].replace(/_/g, ' ');
+        if (isEng) {
+            html += '<th><span class="feat-badge">Engineered</span>' + label + '</th>';
+        } else {
+            html += '<th>' + label + '</th>';
+        }
+    }
+    html += '</tr></thead><tbody>';
+    for (var r = 0; r < rows.length; r++) {
+        html += '<tr>';
+        for (var c = 0; c < cols.length; c++) {
+            var val = rows[r][cols[c]];
+            if (val === null || val === undefined) val = '—';
+            else if (typeof val === 'number') val = val % 1 !== 0 ? val.toFixed(3) : val;
+            html += '<td>' + val + '</td>';
+        }
+        html += '</tr>';
+    }
+    html += '</tbody></table></div>';
+    document.getElementById(containerId).innerHTML = html;
+}
+
+// ============================
+// FEATURE RECIPE RENDERER
+// ============================
+function renderRecipes(containerId, recipes) {
+    var html = '';
+    for (var i = 0; i < recipes.length; i++) {
+        var r = recipes[i];
+        html += '<div class="recipe-card">' +
+            '<div class="recipe-name">' + r.name + '</div>' +
+            '<div class="recipe-formula"><code>' + r.formula + '</code></div>' +
+            '<div class="recipe-desc">' + r.description + '</div>' +
+            '</div>';
+    }
+    document.getElementById(containerId).innerHTML = html;
+}
+
+// ============================
+// WHAT-IF RENDERER
+// ============================
+function renderWhatIf(containerId, config, type) {
+    var features = config.features;
+    var html = '<div class="whatif-grid"><div class="whatif-sliders">';
+    for (var i = 0; i < features.length; i++) {
+        var f = features[i];
+        var step = f.step || (f.max - f.min > 100 ? 1 : 0.1);
+        html += '<div class="whatif-slider-group">' +
+            '<label class="whatif-label">' + f.label +
+            '<span class="whatif-importance" title="Feature importance">' + (f.importance * 100).toFixed(1) + '% imp.</span></label>' +
+            '<input type="range" class="whatif-range" data-feature="' + f.name + '" ' +
+            'min="' + f.min + '" max="' + f.max + '" step="' + step + '" value="' + f.default + '">' +
+            '<div class="whatif-value-row"><span class="whatif-min">' + f.min + '</span>' +
+            '<span class="whatif-current" id="val-' + type + '-' + f.name + '">' + f.default + '</span>' +
+            '<span class="whatif-max">' + f.max + '</span></div>' +
+            '</div>';
+    }
+    html += '</div><div class="whatif-result">';
+    if (type === 'separation') {
+        html += '<div class="whatif-result-title">Predicted Yield</div>' +
+            '<div class="whatif-result-value" id="whatif-sep-yield">' + config.baseline_yield.toFixed(1) + '%</div>' +
+            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-sep-bar" style="width:' + ((config.baseline_yield / 100) * 100) + '%"></div></div>' +
+            '<div class="whatif-result-sub">Baseline: ' + config.baseline_yield.toFixed(1) + '% | Range: ' + config.yield_range[0] + '% – ' + config.yield_range[1] + '%</div>' +
+            '<div class="whatif-result-delta" id="whatif-sep-delta">No change</div>';
+    } else {
+        html += '<div class="whatif-result-title">Predicted Demand</div>' +
+            '<div class="whatif-result-value" id="whatif-fleet-demand">' + Math.round(config.baseline_demand) + ' m³</div>' +
+            '<div class="whatif-result-bar"><div class="whatif-bar-fill" id="whatif-fleet-bar" style="width:50%"></div></div>' +
+            '<div class="whatif-result-sub">Baseline: ' + Math.round(config.baseline_demand) + ' m³ | Range: ' + config.demand_range[0] + ' – ' + config.demand_range[1] + ' m³</div>' +
+            '<div class="whatif-result-delta" id="whatif-fleet-delta">No change</div>';
+    }
+    html += '</div></div>';
+    document.getElementById(containerId).innerHTML = html;
+
+    // Wire up slider events
+    var sliders = document.getElementById(containerId).querySelectorAll('.whatif-range');
+    for (var i = 0; i < sliders.length; i++) {
+        sliders[i].addEventListener('input', function() {
+            var fname = this.getAttribute('data-feature');
+            var valEl = document.getElementById('val-' + type + '-' + fname);
+            if (valEl) valEl.textContent = parseFloat(this.value).toFixed(this.step < 1 ? 2 : 0);
+            computeWhatIf(type);
+        });
+    }
+}
+
+function computeWhatIf(type) {
+    var config = DATA.whatif[type];
+    var features = config.features;
+    var totalDelta = 0;
+
+    for (var i = 0; i < features.length; i++) {
+        var f = features[i];
+        var slider = document.querySelector('#' + type + '-whatif .whatif-range[data-feature="' + f.name + '"]');
+        if (!slider) continue;
+        var currentVal = parseFloat(slider.value);
+        var normalizedDelta = (currentVal - f.mean) / (f.std || 1);
+        totalDelta += normalizedDelta * f.importance;
+    }
+
+    if (type === 'separation') {
+        var yieldRange = config.yield_range[1] - config.yield_range[0];
+        var predicted = config.baseline_yield + totalDelta * yieldRange * 0.4;
+        predicted = Math.max(config.yield_range[0], Math.min(config.yield_range[1], predicted));
+        document.getElementById('whatif-sep-yield').textContent = predicted.toFixed(1) + '%';
+        document.getElementById('whatif-sep-bar').style.width = ((predicted / 100) * 100) + '%';
+        var delta = predicted - config.baseline_yield;
+        var deltaEl = document.getElementById('whatif-sep-delta');
+        deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(2) + ' pp vs baseline';
+        deltaEl.className = 'whatif-result-delta ' + (delta >= 0 ? 'positive' : 'negative');
+    } else {
+        var demandRange = config.demand_range[1] - config.demand_range[0];
+        var predicted = config.baseline_demand + totalDelta * demandRange * 0.3;
+        predicted = Math.max(config.demand_range[0], Math.min(config.demand_range[1], predicted));
+        document.getElementById('whatif-fleet-demand').textContent = Math.round(predicted) + ' m³';
+        var barPct = ((predicted - config.demand_range[0]) / demandRange) * 100;
+        document.getElementById('whatif-fleet-bar').style.width = barPct + '%';
+        var delta = predicted - config.baseline_demand;
+        var deltaEl = document.getElementById('whatif-fleet-delta');
+        deltaEl.textContent = (delta >= 0 ? '+' : '') + Math.round(delta) + ' m³ vs baseline';
+        deltaEl.className = 'whatif-result-delta ' + (delta >= 0 ? 'positive' : 'negative');
+    }
+}
+
+// ============================
+// SEPARATION RENDER
 // ============================
 function renderSeparation() {
     var d = DATA.separation;
     var m = DATA.models.yield || {};
     var fin = DATA.financial;
+    var pipeline = DATA.pipeline.separation;
 
     // Header stat
     var headerR2 = document.getElementById('sep-header-r2');
     if (headerR2) headerR2.textContent = (m.r2 || 0).toFixed(3);
 
-    // KPI cards
+    // STEP 1: Raw data table
+    renderPipelineTable('sep-raw-table', pipeline.raw_sample, []);
+
+    // STEP 2: Feature engineering table + recipes
+    var engCols = ['viscosity_temperature_ratio', 'emulsion_difficulty_score', 'oil_water_density_gap',
+        'specific_energy_input', 'g_force', 'capacity_utilization', 'rolling_yield_7d',
+        'similar_batch_avg_yield', 'viscosity_x_flow_rate'];
+    renderPipelineTable('sep-feat-table', pipeline.features_sample, engCols);
+
+    renderRecipes('sep-recipes', [
+        { name: 'viscosity_temperature_ratio', formula: 'viscosity_40c_cst / feed_temperature_c', description: 'Higher ratio = harder to separate; indicates thick waste needing more heat' },
+        { name: 'g_force', formula: '(centrifuge_rpm / 1000)² × bowl_radius', description: 'Centrifugal force applied; directly controls phase separation speed' },
+        { name: 'capacity_utilization', formula: 'feed_flow_rate / max_flow_capacity', description: 'Operating load factor; too high reduces residence time and yield' },
+        { name: 'viscosity_x_flow_rate', formula: 'viscosity_40c_cst × feed_flow_rate', description: 'Interaction: thick waste at high flow = worst case for separation' }
+    ]);
+
+    // STEP 3: ML Results
     document.getElementById('sep-kpis').innerHTML =
         '<div class="kpi-card"><div class="kpi-label">Yield Model R²</div><div class="kpi-value">' + (m.r2 || 0).toFixed(3) + '</div></div>' +
         '<div class="kpi-card accent-navy"><div class="kpi-label">Model MAE</div><div class="kpi-value">' + (m.mae || 0).toFixed(1) + ' pp</div></div>' +
@@ -125,12 +261,11 @@ function renderSeparation() {
         '<div class="kpi-card"><div class="kpi-label">Avg Margin/Batch</div><div class="kpi-value">' + fmtEur(d.avg_margin) + '</div></div>' +
         '<div class="kpi-card accent-success"><div class="kpi-label">Quality Pass Rate</div><div class="kpi-value">' + fmtPct(fin.separation.quality_rate) + '</div></div>';
 
-    // AI opportunity
     document.getElementById('sep-opportunity').innerHTML =
         '<div class="money-callout">' +
         '<div class="mc-label">AI Optimization Opportunity — Separation Yield Improvement</div>' +
         '<div class="mc-value">' + fmtEur(fin.ai_opportunity.separation_savings) + ' / year</div>' +
-        '<div class="mc-desc">+1.07 pp yield improvement × €1,500/batch × 12,000 batches/year. Each additional 1% yield = €18M/year across all facilities.</div>' +
+        '<div class="mc-desc">+1.07 pp yield improvement × €1,500/batch × 12,000 batches/year.</div>' +
         '</div>';
 
     // Feature importance
@@ -143,11 +278,10 @@ function renderSeparation() {
         hovertemplate: '%{y}: %{x:.1%}<extra></extra>'
     }], Object.assign({}, PLOTLY_LAYOUT, {
         title: { text: 'Top 15 Feature Importances', font: { size: 14, color: HEC_COLORS.navy } },
-        margin: { t: 44, r: 20, b: 40, l: 180 },
-        height: 440
+        margin: { t: 44, r: 20, b: 40, l: 180 }, height: 440
     }), { responsive: true, displayModeBar: false });
 
-    // Actual vs Predicted scatter
+    // Actual vs Predicted
     var ps = d.predictions_scatter;
     var minVal = Math.min.apply(null, ps.actual.concat(ps.predicted));
     var maxVal = Math.max.apply(null, ps.actual.concat(ps.predicted));
@@ -159,8 +293,8 @@ function renderSeparation() {
           line: { color: HEC_COLORS.navy, dash: 'dash', width: 1.5 }, showlegend: false }
     ], Object.assign({}, PLOTLY_LAYOUT, {
         title: { text: 'Actual vs Predicted Yield (%)', font: { size: 14, color: HEC_COLORS.navy } },
-        xaxis: { gridcolor: '#F1F5F9', title: { text: 'Actual Yield (%)', font: { size: 11 } } },
-        yaxis: { gridcolor: '#F1F5F9', title: { text: 'Predicted Yield (%)', font: { size: 11 } } },
+        xaxis: { gridcolor: '#F1F5F9', title: { text: 'Actual (%)', font: { size: 11 } } },
+        yaxis: { gridcolor: '#F1F5F9', title: { text: 'Predicted (%)', font: { size: 11 } } },
         height: 400
     }), { responsive: true, displayModeBar: false });
 
@@ -185,7 +319,7 @@ function renderSeparation() {
         height: 380, margin: { t: 44, b: 20, l: 20, r: 20 }
     }), { responsive: true, displayModeBar: false });
 
-    // Monthly yield trend
+    // Monthly yield
     var mt = d.monthly_trends;
     Plotly.newPlot('chart-sep-yield-monthly', [{
         type: 'scatter', mode: 'lines+markers',
@@ -219,26 +353,46 @@ function renderSeparation() {
     // Model summary table
     var qm = DATA.models.quality || {};
     document.getElementById('sep-model-summary').innerHTML =
-        '<table class="data-table"><thead><tr><th>Model</th><th>Type</th><th>Metric</th><th>Value</th><th>Train Size</th><th>Test Size</th></tr></thead><tbody>' +
-        '<tr><td>Yield Predictor</td><td>XGBoost Regressor</td><td>R²</td><td>' + (m.r2 || 0).toFixed(3) + '</td><td>' + fmtNum(m.train_size || 0) + '</td><td>' + fmtNum(m.test_size || 0) + '</td></tr>' +
+        '<table class="data-table"><thead><tr><th>Model</th><th>Type</th><th>Metric</th><th>Value</th><th>Train</th><th>Test</th></tr></thead><tbody>' +
+        '<tr><td>Yield Predictor</td><td>XGBoost</td><td>R²</td><td>' + (m.r2 || 0).toFixed(3) + '</td><td>' + fmtNum(m.train_size || 0) + '</td><td>' + fmtNum(m.test_size || 0) + '</td></tr>' +
         '<tr><td>Quality Classifier</td><td>Random Forest</td><td>Accuracy</td><td>' + fmtPct((qm.accuracy || 0) * 100) + '</td><td>' + fmtNum(m.train_size || 0) + '</td><td>' + fmtNum(m.test_size || 0) + '</td></tr>' +
-        '<tr><td>Profitability Model</td><td>XGBoost Regressor</td><td>R²</td><td>' + ((DATA.models.profitability || {}).r2 || 0).toFixed(3) + '</td><td>' + fmtNum((DATA.models.profitability || {}).train_rows || 0) + '</td><td>' + fmtNum((DATA.models.profitability || {}).test_rows || 0) + '</td></tr>' +
+        '<tr><td>Profitability</td><td>XGBoost</td><td>R²</td><td>' + ((DATA.models.profitability || {}).r2 || 0).toFixed(3) + '</td><td>' + fmtNum((DATA.models.profitability || {}).train_rows || 0) + '</td><td>' + fmtNum((DATA.models.profitability || {}).test_rows || 0) + '</td></tr>' +
         '</tbody></table>';
+
+    // STEP 4: What-If
+    renderWhatIf('sep-whatif', DATA.whatif.separation, 'sep');
 }
 
 // ============================
-// FLEET CHARTS
+// FLEET RENDER
 // ============================
 function renderFleet() {
     var d = DATA.fleet;
     var m = DATA.models.demand || {};
     var fin = DATA.financial;
+    var pipeline = DATA.pipeline.fleet;
 
     // Header stat
     var headerR2 = document.getElementById('fleet-header-r2');
     if (headerR2) headerR2.textContent = (m.r2 || 0).toFixed(3);
 
-    // KPIs
+    // STEP 1: Raw data table
+    renderPipelineTable('fleet-raw-table', pipeline.raw_sample, []);
+
+    // STEP 2: Feature engineering table + recipes
+    var engCols = ['vessel_calls_7d_rolling', 'waste_7d_rolling', 'waste_per_vessel_call',
+        'yoy_growth_pct', 'cruise_season_flag', 'storage_fill_rate_m3_day',
+        'weather_window_probability', 'expected_margin'];
+    renderPipelineTable('fleet-feat-table', pipeline.features_sample, engCols);
+
+    renderRecipes('fleet-recipes', [
+        { name: 'waste_per_vessel_call', formula: 'waste_volume_m3 / vessel_calls_total', description: 'Waste density per vessel visit; higher = larger ships or dirtier cargo' },
+        { name: 'storage_fill_rate', formula: 'Δstorage_fill_pct / Δdays', description: 'How fast port storage is filling; drives collection urgency' },
+        { name: 'weather_window_probability', formula: '7-day rolling avg of feasible operation days', description: 'Probability that weather allows collection; affects scheduling' },
+        { name: 'expected_margin', formula: 'revenue_estimate − voyage_cost_estimate', description: 'Economic viability of dispatching a vessel to this port' }
+    ]);
+
+    // STEP 3: ML Results
     document.getElementById('fleet-kpis').innerHTML =
         '<div class="kpi-card"><div class="kpi-label">Forecast R²</div><div class="kpi-value">' + (m.r2 || 0).toFixed(3) + '</div></div>' +
         '<div class="kpi-card accent-navy"><div class="kpi-label">MAPE</div><div class="kpi-value">' + fmtPct(m.mape || 0) + '</div></div>' +
@@ -247,12 +401,11 @@ function renderFleet() {
         '<div class="kpi-card"><div class="kpi-label">Avg Voyage Margin</div><div class="kpi-value">' + fmtEur(d.avg_voyage_margin) + '</div></div>' +
         '<div class="kpi-card accent-navy"><div class="kpi-label">Total Fuel Cost</div><div class="kpi-value">' + fmtEur(d.total_fuel_cost) + '</div></div>';
 
-    // AI opportunity
     document.getElementById('fleet-opportunity').innerHTML =
         '<div class="money-callout">' +
         '<div class="mc-label">AI Optimization Opportunity — Fleet Route Optimization</div>' +
         '<div class="mc-value">' + fmtEur(fin.ai_opportunity.fleet_savings) + ' / year</div>' +
-        '<div class="mc-desc">10% fuel cost reduction through optimized routing = ' + fmtEur(fin.ai_opportunity.fleet_savings) + ' annual savings. Additional revenue from better demand-driven scheduling.</div>' +
+        '<div class="mc-desc">10% fuel cost reduction through optimized routing.</div>' +
         '</div>';
 
     // Demand scatter
@@ -268,8 +421,8 @@ function renderFleet() {
               line: { color: HEC_COLORS.navy, dash: 'dash', width: 1.5 }, showlegend: false }
         ], Object.assign({}, PLOTLY_LAYOUT, {
             title: { text: 'Demand: Actual vs Predicted (m³)', font: { size: 14, color: HEC_COLORS.navy } },
-            xaxis: { gridcolor: '#F1F5F9', title: { text: 'Actual Volume (m³)', font: { size: 11 } } },
-            yaxis: { gridcolor: '#F1F5F9', title: { text: 'Predicted Volume (m³)', font: { size: 11 } } },
+            xaxis: { gridcolor: '#F1F5F9', title: { text: 'Actual (m³)', font: { size: 11 } } },
+            yaxis: { gridcolor: '#F1F5F9', title: { text: 'Predicted (m³)', font: { size: 11 } } },
             height: 400
         }), { responsive: true, displayModeBar: false });
     }
@@ -289,7 +442,7 @@ function renderFleet() {
         }), { responsive: true, displayModeBar: false });
     }
 
-    // Monthly demand (top 5 ports)
+    // Monthly demand
     var md = d.monthly_demand_top5;
     if (md) {
         var traces = Object.entries(md).map(function(entry, i) {
@@ -302,7 +455,7 @@ function renderFleet() {
         });
         if (traces.length) {
             Plotly.newPlot('chart-demand-monthly', traces, Object.assign({}, PLOTLY_LAYOUT, {
-                title: { text: 'Monthly Waste Demand — Top 5 Ports', font: { size: 14, color: HEC_COLORS.navy } },
+                title: { text: 'Monthly Demand — Top 5 Ports', font: { size: 14, color: HEC_COLORS.navy } },
                 xaxis: { gridcolor: '#F1F5F9' },
                 yaxis: { gridcolor: '#F1F5F9', title: { text: 'Volume (m³)', font: { size: 11 } } },
                 height: 400, legend: { orientation: 'h', y: -0.2, font: { size: 11 } }
@@ -339,7 +492,7 @@ function renderFleet() {
         }), { responsive: true, displayModeBar: false });
     }
 
-    // Fuel breakdown donut
+    // Fuel donut
     Plotly.newPlot('chart-fleet-fuel', [{
         type: 'pie',
         values: [fin.fleet.total_fuel_cost, fin.fleet.total_revenue - fin.fleet.total_fuel_cost],
@@ -351,31 +504,29 @@ function renderFleet() {
         title: { text: 'Fleet Revenue Breakdown', font: { size: 14, color: HEC_COLORS.navy } },
         height: 380, margin: { t: 44, b: 20, l: 20, r: 20 }
     }), { responsive: true, displayModeBar: false });
+
+    // STEP 4: What-If
+    renderWhatIf('fleet-whatif', DATA.whatif.fleet, 'fleet');
 }
 
 // ============================
-// INITIALIZATION
+// INIT
 // ============================
 document.addEventListener('DOMContentLoaded', async function() {
-    // Load data
     await loadData();
     document.getElementById('loading').style.display = 'none';
     document.getElementById('pages-container').style.display = 'block';
 
-    // Render initial page
     switchPage('separation');
 
-    // Wire up sidebar navigation
     var links = document.querySelectorAll('.sidebar-link');
     for (var i = 0; i < links.length; i++) {
         links[i].addEventListener('click', function(e) {
             e.preventDefault();
-            var page = this.getAttribute('data-page');
-            switchPage(page);
+            switchPage(this.getAttribute('data-page'));
         });
     }
 
-    // Mobile toggle
     var toggle = document.getElementById('sidebar-toggle');
     if (toggle) {
         toggle.addEventListener('click', function() {

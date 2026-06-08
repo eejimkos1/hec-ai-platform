@@ -253,10 +253,206 @@ def build_financial_json():
     print(f"  financial.json ({(OUT / 'financial.json').stat().st_size / 1024:.0f} KB)")
 
 
+def build_pipeline_samples():
+    """Export raw data samples + engineered feature samples for pipeline visualization."""
+
+    # --- SEPARATION ---
+    sep = pd.read_csv(DATA_FEAT / "separation_features.csv")
+
+    # Pick 10 diverse rows (spread across facilities and waste types)
+    sep_sample = sep.groupby("facility_code", group_keys=False).apply(
+        lambda g: g.sample(min(2, len(g)), random_state=42)
+    ).head(10).reset_index(drop=True)
+
+    raw_cols = [
+        "batch_id", "facility_code", "waste_subcategory",
+        "oil_content_pct", "water_content_pct", "solids_content_pct",
+        "viscosity_40c_cst", "density_15c_kg_m3",
+        "feed_temperature_c", "centrifuge_speed_rpm"
+    ]
+    feat_cols = [
+        "batch_id", "viscosity_temperature_ratio", "emulsion_difficulty_score",
+        "oil_water_density_gap", "specific_energy_input", "g_force",
+        "capacity_utilization", "rolling_yield_7d",
+        "similar_batch_avg_yield", "viscosity_x_flow_rate",
+        "oil_recovery_yield_pct"
+    ]
+
+    sep_raw = sep_sample[raw_cols].round(2).to_dict(orient="records")
+    sep_feat = sep_sample[[c for c in feat_cols if c in sep_sample.columns]].round(4).to_dict(orient="records")
+
+    # --- FLEET ---
+    fleet = pd.read_csv(DATA_FEAT / "fleet_features.csv")
+
+    fleet_sample = fleet.groupby("port_code", group_keys=False).apply(
+        lambda g: g.sample(min(1, len(g)), random_state=42)
+    ).head(10).reset_index(drop=True)
+
+    fleet_raw_cols = [
+        "date", "port_code", "port_name", "vessel_calls_total",
+        "waste_volume_collected_m3", "current_storage_fill_pct",
+        "days_until_full", "avg_vessel_size_gt", "competitor_presence"
+    ]
+    fleet_feat_cols = [
+        "port_code", "date", "vessel_calls_7d_rolling", "waste_7d_rolling",
+        "waste_per_vessel_call", "yoy_growth_pct", "cruise_season_flag",
+        "storage_fill_rate_m3_day", "weather_window_probability",
+        "expected_margin"
+    ]
+
+    fleet_raw = fleet_sample[[c for c in fleet_raw_cols if c in fleet_sample.columns]].round(2).to_dict(orient="records")
+    fleet_feat = fleet_sample[[c for c in fleet_feat_cols if c in fleet_sample.columns]].round(4).to_dict(orient="records")
+
+    result = {
+        "separation": {"raw_sample": sep_raw, "features_sample": sep_feat},
+        "fleet": {"raw_sample": fleet_raw, "features_sample": fleet_feat},
+    }
+
+    with open(OUT / "pipeline.json", "w") as f:
+        json.dump(result, f)
+    print(f"  pipeline.json ({(OUT / 'pipeline.json').stat().st_size / 1024:.0f} KB)")
+
+
+def build_whatif_config():
+    """Export what-if scenario config with slider ranges and model coefficients."""
+
+    # Separation: approximate model behavior from feature importances + data stats
+    sep = pd.read_csv(DATA_FEAT / "separation_features.csv")
+    baseline_yield = float(sep["oil_recovery_yield_pct"].mean())
+
+    # Load feature importances for coefficient estimation
+    fi = pd.read_csv(MODELS / "yield_feature_importances.csv")
+    fi_dict = dict(zip(fi["feature"], fi["importance"]))
+
+    # Key features for what-if with realistic ranges
+    sep_features = [
+        {
+            "name": "oil_content_pct", "label": "Oil Content (%)",
+            "min": 5, "max": 95,
+            "default": round(float(sep["oil_content_pct"].mean()), 1),
+            "mean": round(float(sep["oil_content_pct"].mean()), 2),
+            "std": round(float(sep["oil_content_pct"].std()), 2),
+            "importance": round(fi_dict.get("oil_content_pct", 0), 4),
+        },
+        {
+            "name": "water_content_pct", "label": "Water Content (%)",
+            "min": 2, "max": 92,
+            "default": round(float(sep["water_content_pct"].mean()), 1),
+            "mean": round(float(sep["water_content_pct"].mean()), 2),
+            "std": round(float(sep["water_content_pct"].std()), 2),
+            "importance": round(fi_dict.get("water_content_pct", 0), 4),
+        },
+        {
+            "name": "viscosity_40c_cst", "label": "Viscosity (cSt @ 40°C)",
+            "min": 10, "max": 500,
+            "default": round(float(sep["viscosity_40c_cst"].mean()), 0),
+            "mean": round(float(sep["viscosity_40c_cst"].mean()), 2),
+            "std": round(float(sep["viscosity_40c_cst"].std()), 2),
+            "importance": round(fi_dict.get("viscosity_40c_cst", 0), 4),
+        },
+        {
+            "name": "feed_temperature_c", "label": "Feed Temperature (°C)",
+            "min": 35, "max": 95,
+            "default": round(float(sep["feed_temperature_c"].mean()), 0),
+            "mean": round(float(sep["feed_temperature_c"].mean()), 2),
+            "std": round(float(sep["feed_temperature_c"].std()), 2),
+            "importance": round(fi_dict.get("feed_temperature_c", 0), 4),
+        },
+        {
+            "name": "centrifuge_speed_rpm", "label": "Centrifuge Speed (RPM)",
+            "min": 4000, "max": 10000, "step": 100,
+            "default": round(float(sep["centrifuge_speed_rpm"].mean()), 0),
+            "mean": round(float(sep["centrifuge_speed_rpm"].mean()), 2),
+            "std": round(float(sep["centrifuge_speed_rpm"].std()), 2),
+            "importance": round(fi_dict.get("centrifuge_speed_rpm", 0), 4),
+        },
+        {
+            "name": "solids_content_pct", "label": "Solids Content (%)",
+            "min": 0.1, "max": 25,
+            "default": round(float(sep["solids_content_pct"].mean()), 1),
+            "mean": round(float(sep["solids_content_pct"].mean()), 2),
+            "std": round(float(sep["solids_content_pct"].std()), 2),
+            "importance": round(fi_dict.get("solids_content_pct", 0), 4),
+        },
+    ]
+
+    # Fleet what-if
+    fleet = pd.read_csv(DATA_FEAT / "fleet_features.csv")
+    baseline_demand = float(fleet["waste_volume_collected_m3"].mean())
+
+    fleet_features = [
+        {
+            "name": "vessel_calls_total", "label": "Vessel Calls (daily)",
+            "min": 5, "max": 100,
+            "default": round(float(fleet["vessel_calls_total"].mean()), 0),
+            "mean": round(float(fleet["vessel_calls_total"].mean()), 2),
+            "std": round(float(fleet["vessel_calls_total"].std()), 2),
+            "importance": 0.15,
+        },
+        {
+            "name": "current_storage_fill_pct", "label": "Storage Fill (%)",
+            "min": 5, "max": 98,
+            "default": round(float(fleet["current_storage_fill_pct"].mean()), 0),
+            "mean": round(float(fleet["current_storage_fill_pct"].mean()), 2),
+            "std": round(float(fleet["current_storage_fill_pct"].std()), 2),
+            "importance": 0.12,
+        },
+        {
+            "name": "days_until_full", "label": "Days Until Full",
+            "min": 1, "max": 45,
+            "default": round(float(fleet["days_until_full"].mean()), 0),
+            "mean": round(float(fleet["days_until_full"].mean()), 2),
+            "std": round(float(fleet["days_until_full"].std()), 2),
+            "importance": 0.10,
+        },
+        {
+            "name": "waste_volume_collected_m3", "label": "Daily Waste Volume (m³)",
+            "min": 50, "max": 2500,
+            "default": round(float(fleet["waste_volume_collected_m3"].mean()), 0),
+            "mean": round(float(fleet["waste_volume_collected_m3"].mean()), 2),
+            "std": round(float(fleet["waste_volume_collected_m3"].std()), 2),
+            "importance": 0.25,
+        },
+        {
+            "name": "weather_window_probability", "label": "Weather Window Prob.",
+            "min": 0, "max": 1, "step": 0.05,
+            "default": round(float(fleet["weather_window_probability"].mean()), 2),
+            "mean": round(float(fleet["weather_window_probability"].mean()), 2),
+            "std": round(float(fleet["weather_window_probability"].std()), 2),
+            "importance": 0.08,
+        },
+    ]
+
+    result = {
+        "separation": {
+            "baseline_yield": round(baseline_yield, 2),
+            "yield_range": [
+                round(float(sep["oil_recovery_yield_pct"].quantile(0.05)), 1),
+                round(float(sep["oil_recovery_yield_pct"].quantile(0.95)), 1),
+            ],
+            "features": sep_features,
+        },
+        "fleet": {
+            "baseline_demand": round(baseline_demand, 1),
+            "demand_range": [
+                round(float(fleet["waste_volume_collected_m3"].quantile(0.05)), 0),
+                round(float(fleet["waste_volume_collected_m3"].quantile(0.95)), 0),
+            ],
+            "features": fleet_features,
+        },
+    }
+
+    with open(OUT / "whatif.json", "w") as f:
+        json.dump(result, f)
+    print(f"  whatif.json ({(OUT / 'whatif.json').stat().st_size / 1024:.0f} KB)")
+
+
 if __name__ == "__main__":
     print("Building dashboard data...")
     build_separation_json()
     build_fleet_json()
     build_models_json()
     build_financial_json()
+    build_pipeline_samples()
+    build_whatif_config()
     print("Done!")

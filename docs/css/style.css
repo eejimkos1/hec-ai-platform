@@ -591,10 +591,306 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ============ PIPELINE STEPS ============ */
+.pipeline-step {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.pipeline-step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.pipeline-step-number {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.pipeline-step-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+}
+
+.pipeline-step-header p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* Pipeline table scroll wrapper */
+.pipeline-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.pipeline-table-scroll {
+    overflow-x: auto;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.pipeline-table {
+    min-width: 800px;
+}
+
+.pipeline-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    white-space: nowrap;
+    font-size: 0.68rem;
+    padding: 10px 12px;
+}
+
+.pipeline-table td {
+    white-space: nowrap;
+    font-size: 0.78rem;
+    padding: 8px 12px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Feature badge */
+.feat-badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    font-size: 0.58rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* ============ RECIPE CARDS ============ */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.recipe-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.recipe-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.recipe-formula {
+    margin-bottom: 8px;
+}
+
+.recipe-formula code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    color: var(--navy);
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    display: inline-block;
+}
+
+.recipe-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ============ WHAT-IF PANEL ============ */
+.whatif-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+}
+
+.whatif-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+    align-items: start;
+}
+
+.whatif-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.whatif-slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.whatif-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.whatif-importance {
+    font-size: 0.65rem;
+    color: var(--text-light);
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.whatif-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.whatif-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.whatif-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.whatif-value-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--text-light);
+}
+
+.whatif-current {
+    font-weight: 700;
+    color: var(--teal);
+    font-size: 0.75rem;
+}
+
+.whatif-result {
+    background: linear-gradient(135deg, #F8FFFE, #F0FDFA);
+    border: 1px solid rgba(27, 154, 170, 0.15);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-align: center;
+    position: sticky;
+    top: 80px;
+}
+
+.whatif-result-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.whatif-result-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+}
+
+.whatif-result-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.whatif-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--tealLight));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.whatif-result-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.whatif-result-delta {
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.whatif-result-delta.positive {
+    color: var(--success);
+    background: rgba(5, 150, 105, 0.08);
+}
+
+.whatif-result-delta.negative {
+    color: var(--danger);
+    background: rgba(220, 38, 38, 0.08);
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
     .chart-grid { grid-template-columns: 1fr; }
     .roadmap-grid { grid-template-columns: 1fr; }
+    .whatif-grid { grid-template-columns: 1fr; }
+    .whatif-result { position: static; }
 }
 
 @media (max-width: 768px) {
@@ -626,5 +922,9 @@ body {
 
     .kpi-row {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .recipe-grid {
+        grid-template-columns: 1fr;
     }
 }
